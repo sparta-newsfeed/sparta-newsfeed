@@ -5,6 +5,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.sparta.spartanewsfeed.domain.article.controller.dto.ArticleResponseDto;
+import com.sparta.spartanewsfeed.domain.article.entity.Article;
 import com.sparta.spartanewsfeed.domain.article.repository.ArticleRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -24,5 +25,16 @@ public class ArticleService {
 		return articleRepository.findById(id)
 			.map(ArticleResponseDto::from)
 			.orElseThrow(() -> new IllegalArgumentException("해당 게시물은 존재하지 않습니다."));
+	}
+
+	public ArticleResponseDto createArticle(String title, String body) {
+		// TODO: 멤버 개발 완료 되면 인증된 멤버 가져와서 article객체에 설정 필요
+		Article article = Article.builder()
+			.title(title)
+			.body(body)
+			.build();
+
+		Article savedArticle = articleRepository.save(article);
+		return ArticleResponseDto.from(savedArticle);
 	}
 }
