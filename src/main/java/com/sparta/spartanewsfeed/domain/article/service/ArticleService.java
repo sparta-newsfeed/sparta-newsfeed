@@ -37,4 +37,12 @@ public class ArticleService {
 		Article savedArticle = articleRepository.save(article);
 		return ArticleResponseDto.from(savedArticle);
 	}
+
+	public ArticleResponseDto updateArticle(Long id, String title, String body) {
+		Article article = articleRepository.findById(id)
+			.orElseThrow(() -> new IllegalArgumentException("존재하지 않는 게시물 입니다."));
+		article.update(title, body);
+		Article savedArticle = articleRepository.save(article);
+		return ArticleResponseDto.from(savedArticle);
+	}
 }

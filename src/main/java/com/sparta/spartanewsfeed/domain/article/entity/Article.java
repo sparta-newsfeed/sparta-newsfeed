@@ -38,4 +38,14 @@ public class Article extends Timestamp {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "member_id")
 	private Member author;
+
+	public void update(String title, String body) {
+		if (title != null) {
+			this.title = title;
+		}
+
+		if (body != null) {
+			this.body = body;
+		}
+	}
 }
