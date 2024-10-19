@@ -39,10 +39,19 @@ public class ArticleService {
 	}
 
 	public ArticleResponseDto updateArticle(Long id, String title, String body) {
+		// TODO: 인증/인가 개발 완료 후 수정 권한 검증 필요
 		Article article = articleRepository.findById(id)
 			.orElseThrow(() -> new IllegalArgumentException("존재하지 않는 게시물 입니다."));
 		article.update(title, body);
 		Article savedArticle = articleRepository.save(article);
 		return ArticleResponseDto.from(savedArticle);
+	}
+
+	public ArticleResponseDto deleteArticle(Long id) {
+		// TODO: 인증/인가 개발 완료 후 삭제 권한 검증 필요
+		Article article = articleRepository.findById(id)
+			.orElseThrow(() -> new IllegalArgumentException("존재하지 않는 게시물 입니다."));
+		articleRepository.delete(article);
+		return ArticleResponseDto.from(article);
 	}
 }
