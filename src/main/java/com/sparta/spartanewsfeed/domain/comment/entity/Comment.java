@@ -40,4 +40,8 @@ public class Comment extends Timestamp {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "member_id")
 	private Member author;
+
+	public void update(String body) {
+		this.body = body;
+	}
 }
