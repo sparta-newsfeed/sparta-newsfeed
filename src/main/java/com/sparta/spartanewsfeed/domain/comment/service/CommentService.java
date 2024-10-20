@@ -45,4 +45,10 @@ public class CommentService {
 
 		return CommentResponseDto.from(commentRepository.save(comment));
 	}
+
+	public void deleteComment(Long commentId) {
+		Comment comment = commentRepository.findById(commentId)
+			.orElseThrow(() -> new IllegalArgumentException("Comment not found"));
+		commentRepository.delete(comment);
+	}
 }
