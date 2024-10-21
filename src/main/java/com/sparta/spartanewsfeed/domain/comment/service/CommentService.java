@@ -1,5 +1,9 @@
 package com.sparta.spartanewsfeed.domain.comment.service;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,10 +33,20 @@ public class CommentService {
 			.body(body)
 			.build();
 
-		// article.addComment(comment); 
-		// 이와 같은 article 이 comment 등록 함수 필요, 현재는 Comment 만 Article 을 조회할 수 있는 단방향 매핑
-
 		return CommentResponseDto.from(commentRepository.save(comment));
+	}
+
+	public Page<CommentResponseDto> getComments(Long articleId, int page, int size) {
+		if (!articleRepository.existsById(articleId)) {
+			throw new IllegalArgumentException("Article not found");
+		}
+		Pageable pageable = PageRequest.of(page, size, Sort.by("updatedAt").descending());
+
+		Page<Comment> comments = commentRepository.findAllByArticleId(pageable, articleId);
+
+		return comments.map(
+			CommentResponseDto::from
+		);
 	}
 
 	@Transactional
