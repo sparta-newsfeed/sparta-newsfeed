@@ -1,6 +1,7 @@
-package com.sparta.spartanewsfeed.domain.article;
+package com.sparta.spartanewsfeed.domain.article.entity;
 
 import com.sparta.spartanewsfeed.domain.member.Member;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -22,15 +23,15 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class ArticleLike {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "article_id")
-    private Article article;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "article_id")
+	private Article article;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id")
-    private Member member;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "member_id")
+	private Member member;
 }
