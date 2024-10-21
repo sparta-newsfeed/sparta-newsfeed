@@ -1,5 +1,7 @@
 package com.sparta.spartanewsfeed.domain.member;
 
+import org.apache.catalina.User;
+
 import com.sparta.spartanewsfeed.domain.Timestamp;
 import com.sparta.spartanewsfeed.domain.member.dto.ResponseMember;
 import com.sparta.spartanewsfeed.domain.member.dto.UpdateInfo;
@@ -43,6 +45,8 @@ public class Member extends Timestamp {
                 .nickname(member.getNickname())
                 .email(member.getEmail())
                 .role(member.getRole().name())
+                .createdAt(member.getCreatedAt())
+                .updatedAt(member.getUpdatedAt())
                 .build();
     }
 
@@ -53,5 +57,13 @@ public class Member extends Timestamp {
 
     public void updatePassword(String newPassword) {
         this.password = newPassword;
+    }
+
+    public Member(String username, String nickname, UserRole role, String email, String password){
+        this.name = username;
+        this.nickname = nickname;
+        this.email = email;
+        this.password = password;
+        this.role = role;
     }
 }

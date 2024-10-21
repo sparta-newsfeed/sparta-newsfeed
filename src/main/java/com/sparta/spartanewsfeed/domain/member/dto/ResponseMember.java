@@ -1,5 +1,7 @@
 package com.sparta.spartanewsfeed.domain.member.dto;
 
+import java.time.LocalDateTime;
+
 import lombok.Builder;
 import lombok.Getter;
 
@@ -13,4 +15,9 @@ public class ResponseMember {
     private String email;
 
     private String role;
+
+    private String password;
+
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 }
