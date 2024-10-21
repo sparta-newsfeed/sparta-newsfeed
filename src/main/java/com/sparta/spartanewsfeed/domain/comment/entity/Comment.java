@@ -7,7 +7,6 @@ import com.sparta.spartanewsfeed.domain.Timestamp;
 import com.sparta.spartanewsfeed.domain.article.Article;
 import com.sparta.spartanewsfeed.domain.member.Member;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -42,7 +41,7 @@ public class Comment extends Timestamp {
 	@OnDelete(action = OnDeleteAction.CASCADE)
 	private Article article;
 
-	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "member_id")
 	@OnDelete(action = OnDeleteAction.CASCADE)
 	private Member author;
