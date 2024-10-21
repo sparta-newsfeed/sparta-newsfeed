@@ -14,6 +14,7 @@ import com.sparta.spartanewsfeed.domain.member.dto.UpdateInfo;
 import com.sparta.spartanewsfeed.domain.member.dto.UpdatePassword;
 import com.sparta.spartanewsfeed.domain.member.jwt.JwtUtil;
 import com.sparta.spartanewsfeed.domain.member.repository.MemberRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,16 +24,11 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 
 @Service
+@RequiredArgsConstructor
 public class MemberService {
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
-
-    public MemberService(MemberRepository memberRepository, PasswordEncoder passwordEncoder, JwtUtil jwtUtil) {
-        this.memberRepository = memberRepository;
-        this.passwordEncoder = passwordEncoder;
-        this.jwtUtil = jwtUtil;
-    }
 
     @Transactional(readOnly = true)
     public ResponseMember findById(Long id) {
