@@ -3,6 +3,7 @@ package com.sparta.spartanewsfeed.domain.comment.controller;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -51,6 +52,20 @@ public class CommentController {
 	@DeleteMapping("/comment/{commentId}")
 	public ResponseEntity<CommentResponseDto> deleteComment(@PathVariable Long commentId) {
 		commentService.deleteComment(commentId);
+		return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+	}
+
+	@PostMapping("/comment/{commentId}/like")
+	public ResponseEntity<CommentResponseDto> likeComment(@PathVariable Long commentId,
+		@CookieValue(value = "Authorization") String authorization) {
+		commentService.likeComment(commentId, authorization);
+		return ResponseEntity.status(HttpStatus.CREATED).build();
+	}
+
+	@DeleteMapping("/comment/{commentId}/like")
+	public ResponseEntity<CommentResponseDto> unlikeComment(@PathVariable Long commentId,
+		@CookieValue(value = "Authorization") String authorization) {
+		commentService.likeComment(commentId, authorization);
 		return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
 	}
 

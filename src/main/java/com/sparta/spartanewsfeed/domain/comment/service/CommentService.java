@@ -7,10 +7,11 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.sparta.spartanewsfeed.domain.article.Article;
+import com.sparta.spartanewsfeed.domain.article.entity.Article;
+import com.sparta.spartanewsfeed.domain.article.repository.ArticleRepository;
 import com.sparta.spartanewsfeed.domain.comment.controller.dto.CommentResponseDto;
 import com.sparta.spartanewsfeed.domain.comment.entity.Comment;
-import com.sparta.spartanewsfeed.domain.comment.repository.ArticleRepository;
+import com.sparta.spartanewsfeed.domain.comment.repository.CommentLikeRepository;
 import com.sparta.spartanewsfeed.domain.comment.repository.CommentRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -21,6 +22,7 @@ public class CommentService {
 
 	private final CommentRepository commentRepository;
 	private final ArticleRepository articleRepository;
+	private final CommentLikeRepository commentLikeRepository;
 
 	public CommentResponseDto createComment(Long articleId, String body) {
 
@@ -65,4 +67,30 @@ public class CommentService {
 			.orElseThrow(() -> new IllegalArgumentException("Comment not found"));
 		commentRepository.delete(comment);
 	}
+
+	// 추천 유무 (아직 구현되지 않은 회원 정보를 통해 좋아요를 구현할 것으로 예상하여 작성함)
+	/*
+	public void likeComment(Long commentId, String authorization) {
+
+		Comment comment = commentRepository.findById(commentId)
+			.orElseThrow(() -> new IllegalArgumentException("Comment not found"));
+
+		// Member member = null;
+		// jwtUtil 에서 구현할 메서드 (임시)
+
+		if (!commentLikeRepository.existsByCommentIdAndMemberId(commentId, member.getId())) {
+			CommentLike commentLike = CommentLike.builder()
+				.comment(comment)
+				.member(member)
+				.build();
+
+			commentLikeRepository.save(commentLike);
+
+		} else {
+			commentLikeRepository.deleteByCommentIdAndMemberId(commentId, member.getId());
+		}
+
+	}
+	*/
+
 }

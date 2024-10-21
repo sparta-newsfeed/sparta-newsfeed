@@ -4,7 +4,7 @@ import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
 import com.sparta.spartanewsfeed.domain.Timestamp;
-import com.sparta.spartanewsfeed.domain.article.Article;
+import com.sparta.spartanewsfeed.domain.article.entity.Article;
 import com.sparta.spartanewsfeed.domain.member.Member;
 
 import jakarta.persistence.Column;

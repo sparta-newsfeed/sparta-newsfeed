@@ -1,5 +1,8 @@
 package com.sparta.spartanewsfeed.domain.comment.entity;
 
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+
 import com.sparta.spartanewsfeed.domain.member.Member;
 
 import jakarta.persistence.Entity;
@@ -29,9 +32,11 @@ public class CommentLike {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "comment_id")
+	@OnDelete(action = OnDeleteAction.CASCADE)
 	private Comment comment;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "member_id")
+	@OnDelete(action = OnDeleteAction.CASCADE)
 	private Member member;
 }
