@@ -42,6 +42,14 @@ public class FriendService {
 		friendRepository.save(friend1);
 	}
 
+	public void acceptFriend(Member member, Long friendId) {
+		Member friend = memberRepository.findById(friendId)
+			.orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다."));
+
+		Friend friend1 = friendRepository.findByRequestMemberAndResponseMember(friend, member);
+		friend1.update(ACCEPT);
+	}
+
 	public void deleteFriend(Member member, Long friendId) {
 
 	}

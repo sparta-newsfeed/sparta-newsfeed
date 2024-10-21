@@ -37,6 +37,12 @@ public class FriendController {
 		friendService.addFriend(member, friendId);
 	}
 
+	@PostMapping("/{friendId}")
+	public void acceptFriend(HttpServletRequest request, @PathVariable("friendId") Long friendId) {
+		Member member = (Member)request.getAttribute("member");
+		friendService.acceptFriend(member, friendId);
+	}
+
 	@DeleteMapping("/{friendId}")
 	public void deleteFriend(HttpServletRequest request, @PathVariable("friendId") Long friendId) {
 		Member member = (Member)request.getAttribute("member");

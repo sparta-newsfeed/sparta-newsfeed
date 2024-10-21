@@ -50,4 +50,8 @@ public class Friend {
 	@Column(updatable = false)
 	@Temporal(TemporalType.TIMESTAMP)
 	private LocalDateTime requestedAt;
+
+	public void update(FriendStatus friendStatus) {
+		this.status = friendStatus;
+	}
 }

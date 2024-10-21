@@ -11,4 +11,6 @@ public interface FriendRepository extends JpaRepository<Friend, Long> {
 	FriendReponseDto findByRequestMember(Member member);
 
 	FriendReponseDto findByResponseMember(Member member);
+
+	Friend findByRequestMemberAndResponseMember(Member friend, Member member);
 }
