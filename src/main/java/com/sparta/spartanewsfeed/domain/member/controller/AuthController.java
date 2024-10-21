@@ -24,7 +24,7 @@ public class AuthController {
 	}
 
 	@PostMapping("/signup")
-	public String  signup(@Valid @RequestBody SignupRequestDto signupRequestDto) {
+	public String signup(@Valid @RequestBody SignupRequestDto signupRequestDto) {
 		if (!signupRequestDto.getPassword().equals(signupRequestDto.getCheckPassword())) {
 			throw new IllegalArgumentException("비밀번호를 확인하세요");
 		}
@@ -42,7 +42,7 @@ public class AuthController {
 	}
 
 	@PostMapping("/logout")
-	public String  logout(HttpServletRequest request, HttpServletResponse res) {
+	public String logout(HttpServletRequest request, HttpServletResponse res) {
 		Cookie[] cookies = request.getCookies();
 		// //버튼 구현하면 필요 없을...?
 		// if (cookies == null) {

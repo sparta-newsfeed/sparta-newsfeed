@@ -8,7 +8,7 @@ import org.springframework.util.StringUtils;
 
 import com.sparta.spartanewsfeed.domain.member.Member;
 import com.sparta.spartanewsfeed.domain.jwt.jwt.JwtUtil;
-import com.sparta.spartanewsfeed.domain.member.repository.AuthRepository;
+import com.sparta.spartanewsfeed.domain.member.repository.MemberRepository;
 
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.Filter;
@@ -24,11 +24,11 @@ import lombok.extern.slf4j.Slf4j;
 @Order(2)
 public class AuthFilter implements Filter {
 
-	private final AuthRepository authRepository;
+	private final MemberRepository memberRepository;
 	private final JwtUtil jwtUtil;
 
-	public AuthFilter(AuthRepository authRepository, JwtUtil jwtUtil) {
-		this.authRepository = authRepository;
+	public AuthFilter(MemberRepository memberRepository, JwtUtil jwtUtil) {
+		this.memberRepository = memberRepository;
 		this.jwtUtil = jwtUtil;
 	}
 
@@ -61,7 +61,7 @@ public class AuthFilter implements Filter {
 				// 토큰에서 사용자 정보 가져오기
 				Claims info = jwtUtil.getUserInfoFromToken(token);
 
-				Member member = authRepository.findByEmail(info.getSubject()).orElseThrow(() ->
+				Member member = memberRepository.findByEmail(info.getSubject()).orElseThrow(() ->
 					new NullPointerException("Not Found User")
 				);
 
