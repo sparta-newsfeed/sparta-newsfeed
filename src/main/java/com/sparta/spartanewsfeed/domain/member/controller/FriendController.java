@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.sparta.spartanewsfeed.domain.member.Member;
-import com.sparta.spartanewsfeed.domain.member.dto.FriendReponseDto;
+import com.sparta.spartanewsfeed.domain.member.dto.FriendResponseDto;
 import com.sparta.spartanewsfeed.domain.member.service.FriendService;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -26,7 +26,7 @@ public class FriendController {
 	}
 
 	@GetMapping
-	public List<FriendReponseDto> listFriends(HttpServletRequest request) {
+	public List<FriendResponseDto> listFriends(HttpServletRequest request) {
 		Member member = (Member)request.getAttribute("member");
 		return friendService.listFriends(member);
 	}

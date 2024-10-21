@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 
 import com.sparta.spartanewsfeed.domain.member.Friend;
 import com.sparta.spartanewsfeed.domain.member.Member;
-import com.sparta.spartanewsfeed.domain.member.dto.FriendReponseDto;
+import com.sparta.spartanewsfeed.domain.member.dto.FriendResponseDto;
 import com.sparta.spartanewsfeed.domain.member.repository.FriendRepository;
 import com.sparta.spartanewsfeed.domain.member.repository.MemberRepository;
 
@@ -24,12 +24,12 @@ public class FriendService {
 		this.memberRepository = memberRepository;
 	}
 
-	public List<FriendReponseDto> listFriends(Member member) {
+	public List<FriendResponseDto> listFriends(Member member) {
 
-		List<FriendReponseDto> list = new ArrayList<>();
+		List<FriendResponseDto> list = new ArrayList<>();
 
-		list.add(friendRepository.findByRequestMember(member));
-		list.add(friendRepository.findByResponseMember(member));
+		list.add(friendRepository.findByRequestMemberAndStatus(member, ACCEPT));
+		list.add(friendRepository.findByResponseMemberAndStatus(member, ACCEPT));
 
 		return list;
 	}
