@@ -11,7 +11,7 @@ import com.sparta.spartanewsfeed.domain.article.entity.Article;
 import com.sparta.spartanewsfeed.domain.article.repository.ArticleRepository;
 import com.sparta.spartanewsfeed.domain.comment.controller.dto.CommentResponseDto;
 import com.sparta.spartanewsfeed.domain.comment.entity.Comment;
-import com.sparta.spartanewsfeed.domain.comment.repository.CommentLikeRepository;
+//import com.sparta.spartanewsfeed.domain.comment.repository.CommentLikeRepository;
 import com.sparta.spartanewsfeed.domain.comment.repository.CommentRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -22,7 +22,7 @@ public class CommentService {
 
 	private final CommentRepository commentRepository;
 	private final ArticleRepository articleRepository;
-	private final CommentLikeRepository commentLikeRepository;
+	//private final CommentLikeRepository commentLikeRepository;
 
 	public CommentResponseDto createComment(Long articleId, String body) {
 
@@ -66,6 +66,9 @@ public class CommentService {
 		Comment comment = commentRepository.findById(commentId)
 			.orElseThrow(() -> new IllegalArgumentException("Comment not found"));
 		commentRepository.delete(comment);
+	}
+
+	public void likeComment(Long commentId, String authorization) {
 	}
 
 	// 추천 유무 (아직 구현되지 않은 회원 정보를 통해 좋아요를 구현할 것으로 예상하여 작성함)

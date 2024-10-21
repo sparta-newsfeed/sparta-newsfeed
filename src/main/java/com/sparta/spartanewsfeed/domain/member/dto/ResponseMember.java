@@ -1,0 +1,27 @@
+package com.sparta.spartanewsfeed.domain.member.dto;
+
+import com.sparta.spartanewsfeed.converter.DateTimeFormatConverter;
+import com.sparta.spartanewsfeed.domain.member.Member;
+import lombok.Builder;
+import lombok.Getter;
+
+@Getter
+@Builder
+public class ResponseMember {
+    private String name;
+
+    private String nickname;
+
+    private String email;
+
+    private String createdAt;
+
+    public static ResponseMember make(Member member) {
+        return ResponseMember.builder()
+                .name(member.getName())
+                .nickname(member.getNickname())
+                .email(member.getEmail())
+                .createdAt(DateTimeFormatConverter.convertDateTimeFormat(member.getCreatedAt()))
+                .build();
+    }
+}
