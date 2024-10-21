@@ -1,4 +1,7 @@
-package com.sparta.spartanewsfeed.domain.comment;
+package com.sparta.spartanewsfeed.domain.comment.entity;
+
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import com.sparta.spartanewsfeed.domain.Timestamp;
 import com.sparta.spartanewsfeed.domain.article.entity.Article;
@@ -35,9 +38,15 @@ public class Comment extends Timestamp {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "article_id")
+	@OnDelete(action = OnDeleteAction.CASCADE)
 	private Article article;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "member_id")
+	@OnDelete(action = OnDeleteAction.CASCADE)
 	private Member author;
+
+	public void update(String body) {
+		this.body = body;
+	}
 }
