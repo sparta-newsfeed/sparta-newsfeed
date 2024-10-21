@@ -4,7 +4,7 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 
 @Getter
-public class UpdateInfo {
+public class RequestVerifyIdentity {
     @NotBlank
-    private String nickname;
+    private String password;
 }

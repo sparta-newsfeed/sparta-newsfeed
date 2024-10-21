@@ -1,7 +1,7 @@
 package com.sparta.spartanewsfeed.domain.member.dto;
 
-import java.time.LocalDateTime;
-
+import com.sparta.spartanewsfeed.converter.DateTimeFormatConverter;
+import com.sparta.spartanewsfeed.domain.member.Member;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -15,4 +15,13 @@ public class ResponseMember {
     private String email;
 
     private String createdAt;
+
+    public static ResponseMember make(Member member) {
+        return ResponseMember.builder()
+                .name(member.getName())
+                .nickname(member.getNickname())
+                .email(member.getEmail())
+                .createdAt(DateTimeFormatConverter.convertDateTimeFormat(member.getCreatedAt()))
+                .build();
+    }
 }

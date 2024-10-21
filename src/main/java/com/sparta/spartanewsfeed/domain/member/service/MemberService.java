@@ -1,25 +1,42 @@
 package com.sparta.spartanewsfeed.domain.member.service;
 
+import com.sparta.spartanewsfeed.domain.jwt.config.PasswordEncoder;
 import com.sparta.spartanewsfeed.domain.member.Member;
-import com.sparta.spartanewsfeed.domain.member.dto.ResponseMember;
-import com.sparta.spartanewsfeed.domain.member.dto.UpdateInfo;
-import com.sparta.spartanewsfeed.domain.member.dto.UpdatePassword;
+import com.sparta.spartanewsfeed.domain.member.dto.*;
 import com.sparta.spartanewsfeed.domain.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class MemberService {
     private final MemberRepository memberRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Transactional(readOnly = true)
     public ResponseMember findById(Long id) {
         Member foundMember = memberRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("해당 ID 를 가진 회원을 찾을 수 없습니다."));
 
-        return Member.makeResponse(foundMember);
+        return ResponseMember.make(foundMember);
+    }
+
+    @Transactional(readOnly = true)
+    public List<ResponseMember> findAllByNameOrNickname(String nameOrNickname) {
+        List<Member> foundMembers = memberRepository.findAll(nameOrNickname);
+
+        return foundMembers.stream().map(ResponseMember::make).toList();
+    }
+
+    public VerifyIdentityResult verifyIdentity(RequestVerifyIdentity request, Member member) {
+        if (!passwordEncoder.matches(request.getPassword(), member.getPassword())) {
+            return new VerifyIdentityResult(false);
+        }
+
+        return new VerifyIdentityResult(true);
     }
 
     public void updateInfo(Member member, UpdateInfo request) {
@@ -29,18 +46,12 @@ public class MemberService {
 
     @Transactional
     public void updatePassword(Member member, UpdatePassword request) {
-        // 요청으로 전달받은 현재 비밀번호, 새 비밀번호, 새 비밀번호2(입력 확인)를 암호화한 뒤 회원의 비밀번호와 비교해야함
-        // 현재 암호화 구현이 되어있지 않아 주석으로 남김
-
         if (!request.getNewPassword().equals(request.getConfirmNewPassword())) {
             throw new IllegalArgumentException("새로운 비밀번호가 일치하지 않습니다.");
         }
 
-        if (!member.getPassword().equals(request.getOldPassword())) {
-            throw new IllegalArgumentException("현재 비밀번호가 일치하지 않습니다.");
-        }
-
-        member.updatePassword(request.getNewPassword());
+        String encodedPassword = passwordEncoder.encode(request.getNewPassword());
+        member.updatePassword(encodedPassword);
         memberRepository.save(member);
     }
 
