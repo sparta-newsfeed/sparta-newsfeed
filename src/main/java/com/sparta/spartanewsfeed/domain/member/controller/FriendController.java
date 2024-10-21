@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.sparta.spartanewsfeed.domain.member.Friend;
 import com.sparta.spartanewsfeed.domain.member.Member;
 import com.sparta.spartanewsfeed.domain.member.dto.FriendReponseDto;
 import com.sparta.spartanewsfeed.domain.member.service.FriendService;
@@ -33,13 +32,13 @@ public class FriendController {
 	}
 
 	@PostMapping("/{friendId}")
-	public Friend addFriend(HttpServletRequest request, @PathVariable("friendId") String friendId) {
+	public void addFriend(HttpServletRequest request, @PathVariable("friendId") Long friendId) {
 		Member member = (Member)request.getAttribute("member");
-		return friendService.addFriend(member, friendId);
+		friendService.addFriend(member, friendId);
 	}
 
 	@DeleteMapping("/{friendId}")
-	public void deleteFriend(HttpServletRequest request, @PathVariable("friendId") String friendId) {
+	public void deleteFriend(HttpServletRequest request, @PathVariable("friendId") Long friendId) {
 		Member member = (Member)request.getAttribute("member");
 		friendService.deleteFriend(member, friendId);
 	}

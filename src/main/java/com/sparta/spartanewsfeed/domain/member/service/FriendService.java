@@ -1,5 +1,7 @@
 package com.sparta.spartanewsfeed.domain.member.service;
 
+import static com.sparta.spartanewsfeed.domain.member.FriendStatus.*;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -9,14 +11,17 @@ import com.sparta.spartanewsfeed.domain.member.Friend;
 import com.sparta.spartanewsfeed.domain.member.Member;
 import com.sparta.spartanewsfeed.domain.member.dto.FriendReponseDto;
 import com.sparta.spartanewsfeed.domain.member.repository.FriendRepository;
+import com.sparta.spartanewsfeed.domain.member.repository.MemberRepository;
 
 @Service
 public class FriendService {
 
 	private final FriendRepository friendRepository;
+	private final MemberRepository memberRepository;
 
-	public FriendService(FriendRepository friendRepository) {
+	public FriendService(FriendRepository friendRepository, MemberRepository memberRepository) {
 		this.friendRepository = friendRepository;
+		this.memberRepository = memberRepository;
 	}
 
 	public List<FriendReponseDto> listFriends(Member member) {
@@ -29,11 +34,15 @@ public class FriendService {
 		return list;
 	}
 
-	public Friend addFriend(Member member, String friendId) {
-		return null;
+	public void addFriend(Member member, Long friendId) {
+		Member friend = memberRepository.findById(friendId)
+			.orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다."));
+
+		Friend friend1 = Friend.builder().requestMember(member).responseMember(friend).status(PENDING).build();
+		friendRepository.save(friend1);
 	}
 
-	public void deleteFriend(Member member, String friendId) {
+	public void deleteFriend(Member member, Long friendId) {
 
 	}
 
