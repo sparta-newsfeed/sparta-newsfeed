@@ -1,4 +1,4 @@
-package com.sparta.spartanewsfeed.domain.member.filter;
+package com.sparta.spartanewsfeed.domain.jwt.filter;
 
 import java.io.IOException;
 
@@ -7,8 +7,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import com.sparta.spartanewsfeed.domain.member.Member;
-import com.sparta.spartanewsfeed.domain.member.jwt.JwtUtil;
-import com.sparta.spartanewsfeed.domain.member.repository.MemberRepository;
+import com.sparta.spartanewsfeed.domain.jwt.jwt.JwtUtil;
+import com.sparta.spartanewsfeed.domain.member.repository.AuthRepository;
 
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.Filter;
@@ -24,11 +24,11 @@ import lombok.extern.slf4j.Slf4j;
 @Order(2)
 public class AuthFilter implements Filter {
 
-	private final MemberRepository memberRepository;
+	private final AuthRepository authRepository;
 	private final JwtUtil jwtUtil;
 
-	public AuthFilter(MemberRepository memberRepository, JwtUtil jwtUtil) {
-		this.memberRepository = memberRepository;
+	public AuthFilter(AuthRepository authRepository, JwtUtil jwtUtil) {
+		this.authRepository = authRepository;
 		this.jwtUtil = jwtUtil;
 	}
 
@@ -40,7 +40,7 @@ public class AuthFilter implements Filter {
 		String url = httpServletRequest.getRequestURI();
 
 		if (StringUtils.hasText(url) &&
-			(url.startsWith("/api/members") || url.startsWith("/css") || url.startsWith("/js"))
+			(url.startsWith("/api/auth") || url.startsWith("/css") || url.startsWith("/js"))
 		) {
 			// 회원가입, 로그인 관련 API 는 인증 필요없이 요청 진행
 			chain.doFilter(request, response); // 다음 Filter 로 이동
@@ -61,7 +61,7 @@ public class AuthFilter implements Filter {
 				// 토큰에서 사용자 정보 가져오기
 				Claims info = jwtUtil.getUserInfoFromToken(token);
 
-				Member member = memberRepository.findByEmail(info.getSubject()).orElseThrow(() ->
+				Member member = authRepository.findByEmail(info.getSubject()).orElseThrow(() ->
 					new NullPointerException("Not Found User")
 				);
 

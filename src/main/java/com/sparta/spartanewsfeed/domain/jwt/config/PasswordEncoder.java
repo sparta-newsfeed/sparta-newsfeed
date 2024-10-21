@@ -1,4 +1,4 @@
-package com.sparta.spartanewsfeed.domain.member.config;
+package com.sparta.spartanewsfeed.domain.jwt.config;
 
 import at.favre.lib.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Component;

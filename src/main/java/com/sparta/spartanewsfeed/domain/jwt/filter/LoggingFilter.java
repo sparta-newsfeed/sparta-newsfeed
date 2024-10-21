@@ -1,4 +1,4 @@
-package com.sparta.spartanewsfeed.domain.member.filter;
+package com.sparta.spartanewsfeed.domain.jwt.filter;
 
 import java.io.IOException;
 

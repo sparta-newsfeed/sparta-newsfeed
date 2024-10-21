@@ -35,18 +35,18 @@ public class Member extends Timestamp {
     @Column(name = "PASSWORD", nullable = false)
     private String password;
 
-    @Column(name = "ROLE", nullable = false)
-    @Enumerated(value = EnumType.STRING)
-    private UserRole role;
+    // @Column(name = "ROLE", nullable = false)
+    // @Enumerated(value = EnumType.STRING)
+    // private UserRole role;
 
     public static ResponseMember makeResponse(Member member) {
         return ResponseMember.builder()
                 .name(member.getName())
                 .nickname(member.getNickname())
                 .email(member.getEmail())
-                .role(member.getRole().name())
-                .createdAt(member.getCreatedAt())
-                .updatedAt(member.getUpdatedAt())
+                //.role(member.getRole().name())
+                //.createdAt(member.getCreatedAt())
+                //.updatedAt(member.getUpdatedAt())
                 .build();
     }
 
@@ -59,11 +59,10 @@ public class Member extends Timestamp {
         this.password = newPassword;
     }
 
-    public Member(String username, String nickname, UserRole role, String email, String password){
+    public Member(String username, String nickname, String email, String password){
         this.name = username;
         this.nickname = nickname;
         this.email = email;
         this.password = password;
-        this.role = role;
     }
 }
