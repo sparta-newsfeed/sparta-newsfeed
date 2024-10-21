@@ -46,7 +46,7 @@ public class FriendController {
 	@DeleteMapping("/{friendId}")
 	public void rejectFriend(HttpServletRequest request, @PathVariable("friendId") Long friendId) {
 		Member member = (Member)request.getAttribute("member");
-		friendService.rejectFriend(member, friendId);
+		friendService.deleteFriend(member, friendId);
 	}
 
 	@DeleteMapping("/{friendId}")
