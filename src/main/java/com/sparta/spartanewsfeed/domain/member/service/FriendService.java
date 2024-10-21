@@ -2,10 +2,12 @@ package com.sparta.spartanewsfeed.domain.member.service;
 
 import static com.sparta.spartanewsfeed.domain.member.FriendStatus.*;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.sparta.spartanewsfeed.domain.member.Friend;
 import com.sparta.spartanewsfeed.domain.member.Member;
@@ -24,14 +26,13 @@ public class FriendService {
 		this.memberRepository = memberRepository;
 	}
 
-	public List<FriendResponseDto> listFriends(Member member) {
+	public Page<FriendResponseDto> listFriends(Member member, int page, int size) {
+		Pageable pageable = PageRequest.of(page, size, Sort.by("requestedAt").descending());
 
-		List<FriendResponseDto> list = new ArrayList<>();
-
-		list.add(friendRepository.findByRequestMemberAndStatus(member, ACCEPT));
-		list.add(friendRepository.findByResponseMemberAndStatus(member, ACCEPT));
-
-		return list;
+		// Page<Friend> friend = friendRepository.findByRequestMember(member, pageable);
+		Page<Friend> friend = friendRepository.findByStatusAndRequestMemberOrResponseMember(ACCEPT, member, member,
+			pageable);
+		return friend.map(FriendResponseDto::new);
 	}
 
 	public void addFriend(Member member, Long friendId) {
@@ -42,6 +43,7 @@ public class FriendService {
 		friendRepository.save(friend1);
 	}
 
+	@Transactional
 	public void acceptFriend(Member member, Long friendId) {
 		Member friend = memberRepository.findById(friendId)
 			.orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다."));

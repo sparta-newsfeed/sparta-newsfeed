@@ -54,4 +54,5 @@ public class Friend {
 	public void update(FriendStatus friendStatus) {
 		this.status = friendStatus;
 	}
+
 }
