@@ -8,6 +8,8 @@ import lombok.Getter;
 @Getter
 @Builder
 public class ResponseMember {
+    private Long id;
+
     private String name;
 
     private String nickname;

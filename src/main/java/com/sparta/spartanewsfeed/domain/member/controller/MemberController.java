@@ -33,8 +33,9 @@ public class MemberController {
 	
 	@GetMapping("/search-condition")
 	@ResponseStatus(HttpStatus.OK)
-	public List<ResponseMember> findAllByNameOrNickname(@RequestParam(name = "nameOrNickname", defaultValue = "") String nameOrNickname) {
-		return memberService.findAllByNameOrNickname(nameOrNickname);
+	public List<ResponseMember> findAllByNameOrNickname(@RequestParam(name = "nameOrNickname", defaultValue = "") String nameOrNickname,
+														@RequestParam(name = "lastMemberId", defaultValue = "0") Long lastMemberId) {
+		return memberService.findAllByNameOrNickname(nameOrNickname, lastMemberId);
 	}
 
 	@PostMapping("/verify-identity")

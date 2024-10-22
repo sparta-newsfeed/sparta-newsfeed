@@ -34,8 +34,8 @@ public class MemberService {
     }
 
     @Transactional(readOnly = true)
-    public List<ResponseMember> findAllByNameOrNickname(String nameOrNickname) {
-        List<Member> foundMembers = memberRepository.findAll(nameOrNickname);
+    public List<ResponseMember> findAllByNameOrNickname(String nameOrNickname, Long lastMemberId) {
+        List<Member> foundMembers = memberRepository.findAll(nameOrNickname, lastMemberId);
 
         return foundMembers.stream().map(ResponseMember::make).toList();
     }
