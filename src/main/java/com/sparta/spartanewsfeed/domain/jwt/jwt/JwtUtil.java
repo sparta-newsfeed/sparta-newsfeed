@@ -31,7 +31,6 @@ import jakarta.servlet.http.HttpServletResponse;
 @Component
 public class JwtUtil {
 
-
 	// Header KEY 값
 	public static final String AUTHORIZATION_HEADER = "Authorization";
 	// 사용자 권한 값의 KEY
@@ -57,7 +56,7 @@ public class JwtUtil {
 
 	//JWT 생성
 	// 토큰 생성
-	public String createToken(String username, UserRole role) {
+	public String createToken(String email, UserRole role) {
 		Date date = new Date();
 
 		// 토큰 만료시간
@@ -65,14 +64,13 @@ public class JwtUtil {
 		long TOKEN_TIME = 60 * 60 * 1000L;
 		return BEARER_PREFIX +
 			Jwts.builder()
-				.setSubject(username) // 사용자 식별자값(ID)
+				.setSubject(email) // 사용자 식별자값(ID)
 				.claim(AUTHORIZATION_KEY, role) // 사용자 권한
 				.setExpiration(new Date(date.getTime() + TOKEN_TIME)) // 만료 시간
 				.setIssuedAt(date) // 발급일
 				.signWith(key, signatureAlgorithm) // 암호화 알고리즘
 				.compact();
 	}
-
 
 	//생성된 JWT를 Cookie에 저장
 	public void addJwtToCookie(String token, HttpServletResponse res) {
@@ -125,7 +123,7 @@ public class JwtUtil {
 	// HttpServletRequest 에서 Cookie Value : JWT 가져오기
 	public String getTokenFromRequest(HttpServletRequest req) {
 		Cookie[] cookies = req.getCookies();
-		if(cookies != null) {
+		if (cookies != null) {
 			for (Cookie cookie : cookies) {
 				if (cookie.getName().equals(AUTHORIZATION_HEADER)) {
 					try {

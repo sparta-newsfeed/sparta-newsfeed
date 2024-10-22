@@ -4,16 +4,22 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 import com.sparta.spartanewsfeed.domain.article.entity.Article;
 import com.sparta.spartanewsfeed.domain.article.repository.ArticleRepository;
 import com.sparta.spartanewsfeed.domain.comment.controller.dto.CommentResponseDto;
 import com.sparta.spartanewsfeed.domain.comment.entity.Comment;
-//import com.sparta.spartanewsfeed.domain.comment.repository.CommentLikeRepository;
+import com.sparta.spartanewsfeed.domain.comment.repository.CommentLikeRepository;
 import com.sparta.spartanewsfeed.domain.comment.repository.CommentRepository;
+import com.sparta.spartanewsfeed.domain.jwt.jwt.JwtUtil;
+import com.sparta.spartanewsfeed.domain.member.Member;
+import com.sparta.spartanewsfeed.domain.member.repository.MemberRepository;
 
+import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -22,78 +28,80 @@ public class CommentService {
 
 	private final CommentRepository commentRepository;
 	private final ArticleRepository articleRepository;
-	//private final CommentLikeRepository commentLikeRepository;
+	private final MemberRepository memberRepository;
+	private final CommentLikeRepository commentLikeRepository;
+	private final JwtUtil jwtUtil;
 
-	public CommentResponseDto createComment(Long articleId, String body) {
+	public CommentResponseDto createComment(Long articleId, String body, String authorization) {
 
 		Article article = articleRepository.findById(articleId)
-			.orElseThrow(() -> new IllegalArgumentException("Article not found"));
+			.orElseThrow(() -> new IllegalArgumentException("Article id " + articleId + " not found"));
+
+		Member author = findByEmail(authorization);
 
 		Comment comment = Comment.builder()
 			.article(article)
-			.author(article.getAuthor())
+			.author(author)
 			.body(body)
 			.build();
 
-		return CommentResponseDto.from(commentRepository.save(comment));
+		return CommentResponseDto.of(commentRepository.save(comment), false);
 	}
 
-	public Page<CommentResponseDto> getComments(Long articleId, int page, int size) {
+	public Page<CommentResponseDto> getComments(Long articleId, int page, int size, String authorization) {
 		if (!articleRepository.existsById(articleId)) {
-			throw new IllegalArgumentException("Article not found");
+			throw new IllegalArgumentException("Article id " + articleId + " not found");
 		}
-		Pageable pageable = PageRequest.of(page, size, Sort.by("updatedAt").descending());
 
+		Pageable pageable = PageRequest.of(page, size, Sort.by("updatedAt").descending());
 		Page<Comment> comments = commentRepository.findAllByArticleId(pageable, articleId);
 
-		return comments.map(
-			CommentResponseDto::from
+		Member author = findByEmail(authorization);
+
+		return comments.map(comment -> {
+				boolean isLiked = commentLikeRepository.existsByCommentIdAndMemberId(comment.getId(), author.getId());
+				return CommentResponseDto.of(comment, isLiked);
+			}
 		);
 	}
 
 	@Transactional
-	public CommentResponseDto updateComment(Long commentId, String body) {
+	public CommentResponseDto updateComment(Long commentId, String body, String authorization) {
 
 		Comment comment = commentRepository.findById(commentId)
-			.orElseThrow(() -> new IllegalArgumentException("Comment not found"));
+			.orElseThrow(() -> new IllegalArgumentException("Comment id " + commentId + " not found"));
 
+		Member author = findByEmail(authorization);
+
+		if (!comment.getAuthor().equals(author)) {
+			throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You are not the author of this comment");
+		}
+
+		boolean isLiked = commentLikeRepository.existsByCommentIdAndMemberId(comment.getId(), author.getId());
 		comment.update(body);
 
-		return CommentResponseDto.from(commentRepository.save(comment));
+		return CommentResponseDto.of(commentRepository.save(comment), isLiked);
 	}
 
-	public void deleteComment(Long commentId) {
+	@Transactional
+	public void deleteComment(Long commentId, String authorization) {
 		Comment comment = commentRepository.findById(commentId)
-			.orElseThrow(() -> new IllegalArgumentException("Comment not found"));
+			.orElseThrow(() -> new IllegalArgumentException("Comment id " + commentId + " not found"));
+
+		Member author = findByEmail(authorization);
+
+		if (!comment.getAuthor().equals(author)) {
+			throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You are not the author of this comment");
+		}
 		commentRepository.delete(comment);
 	}
 
-	public void likeComment(Long commentId, String authorization) {
+	private Member findByEmail(String authorization) {
+		authorization = jwtUtil.substringToken(authorization);
+		Claims claims = jwtUtil.getUserInfoFromToken(authorization);
+
+		return memberRepository.findByEmail(claims.getSubject())
+			.orElseThrow(() -> new IllegalArgumentException("User not found"));
 	}
-
-	// 추천 유무 (아직 구현되지 않은 회원 정보를 통해 좋아요를 구현할 것으로 예상하여 작성함)
-	/*
-	public void likeComment(Long commentId, String authorization) {
-
-		Comment comment = commentRepository.findById(commentId)
-			.orElseThrow(() -> new IllegalArgumentException("Comment not found"));
-
-		// Member member = null;
-		// jwtUtil 에서 구현할 메서드 (임시)
-
-		if (!commentLikeRepository.existsByCommentIdAndMemberId(commentId, member.getId())) {
-			CommentLike commentLike = CommentLike.builder()
-				.comment(comment)
-				.member(member)
-				.build();
-
-			commentLikeRepository.save(commentLike);
-
-		} else {
-			commentLikeRepository.deleteByCommentIdAndMemberId(commentId, member.getId());
-		}
-
-	}
-	*/
 
 }
