@@ -3,6 +3,8 @@ package com.sparta.spartanewsfeed.domain.member.service;
 import static com.sparta.spartanewsfeed.domain.member.FriendStatus.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -17,7 +19,10 @@ import com.sparta.spartanewsfeed.domain.member.dto.FriendResponseDto;
 import com.sparta.spartanewsfeed.domain.member.repository.FriendRepository;
 import com.sparta.spartanewsfeed.domain.member.repository.MemberRepository;
 
+import lombok.extern.slf4j.Slf4j;
+
 @Service
+@Slf4j(topic = "FriendService")
 public class FriendService {
 
 	private final FriendRepository friendRepository;
@@ -41,6 +46,7 @@ public class FriendService {
 		Member friend = memberRepository.findById(friendId)
 			.orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다."));
 
+
 		Friend friend1 = findByRequestMemberAndResponseMember(member, friend);
 		if (!member.getId().equals(friendId)) {
 			throw new IllegalArgumentException("본인과 친구가 될 수 없습니다.");
@@ -50,7 +56,6 @@ public class FriendService {
 		}
 		friend1 = Friend.builder().requestMember(member).responseMember(friend).status(PENDING)
 			.requestedAt(LocalDateTime.now())
-			.build();
 		friendRepository.save(friend1);
 	}
 
@@ -81,4 +86,12 @@ public class FriendService {
 		return friend1;
 	}
 
+	public List<Member> getRelatedFriends(Member requestMember) {
+		List<Friend> friends = friendRepository.findFriendsByMember(requestMember);
+
+		return friends.stream()
+			.map(friend -> friend.findFriend(requestMember))
+			.flatMap(Optional::stream)
+			.toList();
+	}
 }
