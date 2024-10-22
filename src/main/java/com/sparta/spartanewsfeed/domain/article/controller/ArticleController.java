@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -17,6 +18,7 @@ import com.sparta.spartanewsfeed.domain.article.controller.dto.ArticleCreateDto;
 import com.sparta.spartanewsfeed.domain.article.controller.dto.ArticleResponseDto;
 import com.sparta.spartanewsfeed.domain.article.controller.dto.ArticleUpdateDto;
 import com.sparta.spartanewsfeed.domain.article.service.ArticleService;
+import com.sparta.spartanewsfeed.domain.member.Member;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -29,10 +31,13 @@ public class ArticleController {
 	private final ArticleService articleService;
 
 	@GetMapping
-	public ResponseEntity<Page<ArticleResponseDto>> retrieveArticles(Pageable pageable) {
+	public ResponseEntity<Page<ArticleResponseDto>> retrieveArticles(
+		@RequestAttribute("member") Member member,
+		Pageable pageable
+	) {
 		return ResponseEntity
 			.status(HttpStatus.OK)
-			.body(articleService.retrieveArticles(pageable));
+			.body(articleService.retrieveArticles(pageable, member));
 	}
 
 	@GetMapping("/{id}")
@@ -43,17 +48,21 @@ public class ArticleController {
 	}
 
 	@PostMapping
-	public ResponseEntity<ArticleResponseDto> createArticle(@RequestBody @Valid ArticleCreateDto req) {
+	public ResponseEntity<ArticleResponseDto> createArticle(
+		@RequestAttribute("member") Member member,
+		@RequestBody @Valid ArticleCreateDto req
+	) {
 		String title = req.getTitle();
 		String body = req.getBody();
 
 		return ResponseEntity
 			.status(HttpStatus.CREATED)
-			.body(articleService.createArticle(title, body));
+			.body(articleService.createArticle(title, body, member));
 	}
 
 	@PatchMapping("/{id}")
 	public ResponseEntity<ArticleResponseDto> updateArticle(
+		@RequestAttribute("member") Member member,
 		@PathVariable Long id,
 		@RequestBody ArticleUpdateDto req
 	) {
@@ -62,7 +71,7 @@ public class ArticleController {
 
 		return ResponseEntity
 			.status(HttpStatus.OK)
-			.body(articleService.updateArticle(id, title, body));
+			.body(articleService.updateArticle(id, title, body, member));
 	}
 
 	@DeleteMapping("/{id}")
