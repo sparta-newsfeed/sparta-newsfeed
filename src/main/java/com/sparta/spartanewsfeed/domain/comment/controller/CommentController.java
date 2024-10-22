@@ -1,6 +1,6 @@
 package com.sparta.spartanewsfeed.domain.comment.controller;
 
-import org.springframework.data.domain.Page;
+import org.springframework.data.web.PagedModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CookieValue;
@@ -39,13 +39,13 @@ public class CommentController {
 	}
 
 	@GetMapping("/articles/{articleId}/comment")
-	public ResponseEntity<Page<CommentResponseDto>> getComments(
+	public ResponseEntity<PagedModel<CommentResponseDto>> getComments(
 		@PathVariable Long articleId,
 		@RequestParam(required = false, defaultValue = "0") int page,
 		@RequestParam(required = false, defaultValue = "10") int size,
 		@CookieValue(value = "Authorization", required = false) String authorization) {
 		return ResponseEntity.status(HttpStatus.OK)
-			.body(commentService.getComments(articleId, page, size, authorization));
+			.body(new PagedModel<>(commentService.getComments(articleId, page, size, authorization)));
 	}
 
 	@PutMapping("/comment/{commentId}")
@@ -64,10 +64,9 @@ public class CommentController {
 	}
 
 	@PostMapping("/comment/{commentId}/like")
-	public ResponseEntity<CommentResponseDto> likeComment(@PathVariable Long commentId,
+	public ResponseEntity<Integer> likeComment(@PathVariable Long commentId,
 		@CookieValue(value = "Authorization") String authorization) {
-		commentLikeService.likeComment(commentId, authorization);
-		return ResponseEntity.status(HttpStatus.CREATED).build();
+		return ResponseEntity.status(HttpStatus.CREATED).body(commentLikeService.likeComment(commentId, authorization));
 	}
 
 }
