@@ -58,14 +58,14 @@ public class CommentController {
 	@PostMapping("/comment/{commentId}/like")
 	public ResponseEntity<CommentResponseDto> likeComment(@PathVariable Long commentId,
 		@CookieValue(value = "Authorization") String authorization) {
-		commentService.likeComment(commentId, authorization);
+		//commentService.likeComment(commentId, authorization);
 		return ResponseEntity.status(HttpStatus.CREATED).build();
 	}
 
 	@DeleteMapping("/comment/{commentId}/like")
 	public ResponseEntity<CommentResponseDto> unlikeComment(@PathVariable Long commentId,
 		@CookieValue(value = "Authorization") String authorization) {
-		commentService.likeComment(commentId, authorization);
+		//commentService.likeComment(commentId, authorization);
 		return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
 	}
 
