@@ -1,5 +1,7 @@
 package com.sparta.spartanewsfeed.domain.member.service;
 
+import static com.sparta.spartanewsfeed.domain.jwt.jwt.JwtUtil.*;
+
 import java.util.Optional;
 
 import org.springframework.stereotype.Service;
@@ -24,7 +26,7 @@ public class AuthService {
 	private final PasswordEncoder passwordEncoder;
 	private final JwtUtil jwtUtil;
 
-	public void signup(@Valid SignupRequestDto signupRequestDto) {
+	public Member signup(@Valid SignupRequestDto signupRequestDto) {
 		String username = signupRequestDto.getUsername();
 		String nickname = signupRequestDto.getNickname();
 		UserRole role = UserRole.USER;
@@ -41,6 +43,8 @@ public class AuthService {
 		// 사용자 생성 및 저장
 		Member member = new Member(username, nickname, role, email, password);
 		memberRepository.save(member);
+
+		return member;
 	}
 
 	public void login(LoginRequestDto requestDto, HttpServletResponse res) {

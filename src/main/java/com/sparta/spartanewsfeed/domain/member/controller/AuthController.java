@@ -1,11 +1,15 @@
 package com.sparta.spartanewsfeed.domain.member.controller;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.sparta.spartanewsfeed.domain.member.Member;
 import com.sparta.spartanewsfeed.domain.member.dto.LoginRequestDto;
+import com.sparta.spartanewsfeed.domain.member.dto.ResponseMember;
 import com.sparta.spartanewsfeed.domain.member.dto.SignupRequestDto;
 import com.sparta.spartanewsfeed.domain.member.service.AuthService;
 
@@ -24,17 +28,19 @@ public class AuthController {
 	}
 
 	@PostMapping("/signup")
-	public String signup(@Valid @RequestBody SignupRequestDto signupRequestDto) {
+	@ResponseStatus(HttpStatus.CREATED) //201
+	public ResponseMember signup(@Valid @RequestBody SignupRequestDto signupRequestDto) {
 		if (!signupRequestDto.getPassword().equals(signupRequestDto.getCheckPassword())) {
 			throw new IllegalArgumentException("비밀번호를 확인하세요");
 		}
 
-		authService.signup(signupRequestDto);
+		Member member = authService.signup(signupRequestDto);
 		System.out.println("회원가입 성공");
-		return "회원가입 성공";
+		return ResponseMember.make(member);
 	}
 
 	@PostMapping("/login")
+	@ResponseStatus(HttpStatus.CREATED) //201
 	public String login(@RequestBody LoginRequestDto requestDto, HttpServletResponse res) {
 		authService.login(requestDto, res);
 		System.out.println("로그인");
@@ -42,6 +48,7 @@ public class AuthController {
 	}
 
 	@PostMapping("/logout")
+	@ResponseStatus(HttpStatus.NO_CONTENT) //204
 	public String logout(HttpServletRequest request, HttpServletResponse res) {
 		Cookie[] cookies = request.getCookies();
 		// //버튼 구현하면 필요 없을...?
