@@ -26,8 +26,9 @@ public class MemberController {
 
 	@GetMapping("/{memberId}")
 	@ResponseStatus(HttpStatus.OK)
-	public ResponseMember findById(@PathVariable(name = "memberId") Long memberId) {
-		return memberService.findById(memberId);
+	public OtherMemberProfile findById(@RequestAttribute(name = "member") Member member,
+								   @PathVariable(name = "memberId") Long memberId) {
+		return memberService.findById(member, memberId);
 	}
 	
 	@GetMapping("/search-condition")
