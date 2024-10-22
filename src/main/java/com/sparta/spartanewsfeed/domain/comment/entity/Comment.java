@@ -1,6 +1,10 @@
-package com.sparta.spartanewsfeed.domain.article;
+package com.sparta.spartanewsfeed.domain.comment.entity;
+
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import com.sparta.spartanewsfeed.domain.Timestamp;
+import com.sparta.spartanewsfeed.domain.article.entity.Article;
 import com.sparta.spartanewsfeed.domain.member.Member;
 
 import jakarta.persistence.Column;
@@ -23,19 +27,26 @@ import lombok.NoArgsConstructor;
 @Table
 @AllArgsConstructor
 @NoArgsConstructor
-public class Article extends Timestamp {
+public class Comment extends Timestamp {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
 	@Column(nullable = false)
-	private String title;
-
-	@Column(nullable = false)
 	private String body;
 
 	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "article_id")
+	@OnDelete(action = OnDeleteAction.CASCADE)
+	private Article article;
+
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "member_id")
+	@OnDelete(action = OnDeleteAction.CASCADE)
 	private Member author;
+
+	public void update(String body) {
+		this.body = body;
+	}
 }

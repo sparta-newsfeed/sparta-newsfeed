@@ -1,7 +1,6 @@
-package com.sparta.spartanewsfeed.domain.comment;
+package com.sparta.spartanewsfeed.domain.article.entity;
 
 import com.sparta.spartanewsfeed.domain.Timestamp;
-import com.sparta.spartanewsfeed.domain.article.Article;
 import com.sparta.spartanewsfeed.domain.member.Member;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -23,20 +22,29 @@ import lombok.NoArgsConstructor;
 @Table
 @AllArgsConstructor
 @NoArgsConstructor
-public class Comment extends Timestamp {
+public class Article extends Timestamp {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(nullable = false)
+    private String title;
+
+    @Column(nullable = false)
     private String body;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "article_id")
-    private Article article;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "member_id")
+	private Member author;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id")
-    private Member author;
+	public void update(String title, String body) {
+		if (title != null) {
+			this.title = title;
+		}
+
+		if (body != null) {
+			this.body = body;
+		}
+	}
 }
