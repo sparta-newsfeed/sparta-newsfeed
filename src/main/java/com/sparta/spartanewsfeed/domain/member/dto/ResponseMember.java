@@ -8,6 +8,8 @@ import lombok.Getter;
 @Getter
 @Builder
 public class ResponseMember {
+    private Long id;
+
     private String name;
 
     private String nickname;
@@ -18,6 +20,7 @@ public class ResponseMember {
 
     public static ResponseMember make(Member member) {
         return ResponseMember.builder()
+                .id(member.getId())
                 .name(member.getName())
                 .nickname(member.getNickname())
                 .email(member.getEmail())
