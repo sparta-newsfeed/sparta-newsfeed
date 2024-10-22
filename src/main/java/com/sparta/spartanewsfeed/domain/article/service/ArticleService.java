@@ -56,21 +56,23 @@ public class ArticleService {
 	public ArticleResponseDto updateArticle(Long id, String title, String body, Member member) {
 		Article article = articleRepository.findById(id)
 			.orElseThrow(() -> new IllegalArgumentException("존재하지 않는 게시물 입니다."));
-
-		if (!(article.isAuthor(member.getId()) || member.isAdmin())) {
-			throw new ResponseStatusException(HttpStatus.FORBIDDEN, "권한이 없습니다.");
-		}
-
+		verifyAuthorOrAdmin(article, member);
 		article.update(title, body);
 		Article savedArticle = articleRepository.save(article);
 		return ArticleResponseDto.from(savedArticle);
 	}
 
-	public ArticleResponseDto deleteArticle(Long id) {
-		// TODO: 인증/인가 개발 완료 후 삭제 권한 검증 필요
+	public ArticleResponseDto deleteArticle(Long id, Member member) {
 		Article article = articleRepository.findById(id)
 			.orElseThrow(() -> new IllegalArgumentException("존재하지 않는 게시물 입니다."));
+		verifyAuthorOrAdmin(article, member);
 		articleRepository.delete(article);
 		return ArticleResponseDto.from(article);
+	}
+
+	private void verifyAuthorOrAdmin(Article article, Member member) {
+		if (!(article.isAuthor(member.getId()) || member.isAdmin())) {
+			throw new ResponseStatusException(HttpStatus.FORBIDDEN, "권한이 없습니다.");
+		}
 	}
 }
