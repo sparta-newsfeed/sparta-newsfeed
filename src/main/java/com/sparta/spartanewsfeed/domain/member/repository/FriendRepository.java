@@ -19,6 +19,6 @@ public interface FriendRepository extends JpaRepository<Friend, Long> {
 	Page<Friend> findByStatusAndRequestMemberOrResponseMember(FriendStatus friendStatus, Member member, Member member1,
 		Pageable pageable);
 
-	@Query("SELECT f FROM Friend f WHERE f.responseMember = :member OR f.requestMember = :member")
+	@Query("SELECT f FROM Friend f join fetch f.responseMember join fetch f.requestMember WHERE f.responseMember = :member OR f.requestMember = :member")
 	List<Friend> findFriendsByMember(@Param("member") Member member);
 }
