@@ -60,4 +60,8 @@ public class Article extends Timestamp {
 			this.body = body;
 		}
 	}
+
+	public boolean isAuthor(Long id) {
+		return author.isUserIdEqual(id);
+	}
 }

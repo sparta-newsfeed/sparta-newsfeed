@@ -63,4 +63,8 @@ public class Member extends Timestamp {
 	public boolean isUserIdEqual(Long id) {
 		return id.equals(this.id);
 	}
+
+	public boolean isAdmin() {
+		return role == UserRole.ADMIN;
+	}
 }
