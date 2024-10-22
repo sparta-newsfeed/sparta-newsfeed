@@ -46,7 +46,6 @@ public class FriendService {
 		Member friend = memberRepository.findById(friendId)
 			.orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다."));
 
-
 		Friend friend1 = findByRequestMemberAndResponseMember(member, friend);
 		if (!member.getId().equals(friendId)) {
 			throw new IllegalArgumentException("본인과 친구가 될 수 없습니다.");
@@ -55,7 +54,7 @@ public class FriendService {
 			throw new IllegalArgumentException("이미 친구입니다.");
 		}
 		friend1 = Friend.builder().requestMember(member).responseMember(friend).status(PENDING)
-			.requestedAt(LocalDateTime.now())
+			.requestedAt(LocalDateTime.now()).build();
 		friendRepository.save(friend1);
 	}
 
