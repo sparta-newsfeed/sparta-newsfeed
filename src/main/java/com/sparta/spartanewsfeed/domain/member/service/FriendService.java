@@ -2,6 +2,7 @@ package com.sparta.spartanewsfeed.domain.member.service;
 
 import static com.sparta.spartanewsfeed.domain.member.FriendStatus.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -45,11 +46,16 @@ public class FriendService {
 		Member friend = memberRepository.findById(friendId)
 			.orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다."));
 
-		Friend friend1 = Friend.builder()
-			.requestMember(member)
-			.responseMember(friend)
-			.status(PENDING)
-			.build();
+
+		Friend friend1 = findByRequestMemberAndResponseMember(member, friend);
+		if (!member.getId().equals(friendId)) {
+			throw new IllegalArgumentException("본인과 친구가 될 수 없습니다.");
+		}
+		if (friend1 != null) {
+			throw new IllegalArgumentException("이미 친구입니다.");
+		}
+		friend1 = Friend.builder().requestMember(member).responseMember(friend).status(PENDING)
+			.requestedAt(LocalDateTime.now())
 		friendRepository.save(friend1);
 	}
 
@@ -65,8 +71,19 @@ public class FriendService {
 	public void deleteFriend(Member member, Long friendId) {
 		Member friend = memberRepository.findById(friendId)
 			.orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다."));
-		Friend friend1 = friendRepository.findByRequestMemberAndResponseMember(friend, member);
+
+		Friend friend1 = findByRequestMemberAndResponseMember(member, friend);
+
 		friendRepository.delete(friend1);
+
+	}
+
+	private Friend findByRequestMemberAndResponseMember(Member member, Member friend) {
+		Friend friend1 = friendRepository.findByRequestMemberAndResponseMember(member, friend);
+		if (friend1 == null) {
+			friend1 = friendRepository.findByRequestMemberAndResponseMember(member, friend);
+		}
+		return friend1;
 	}
 
 	public List<Member> getRelatedFriends(Member requestMember) {
