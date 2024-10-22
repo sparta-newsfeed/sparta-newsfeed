@@ -73,7 +73,6 @@ public class JwtUtil {
 				.compact();
 	}
 
-
 	//생성된 JWT를 Cookie에 저장
 	public void addJwtToCookie(String token, HttpServletResponse res) {
 		try {
