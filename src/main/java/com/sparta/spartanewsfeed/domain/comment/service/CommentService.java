@@ -23,7 +23,7 @@ public class CommentService {
 	private final CommentRepository commentRepository;
 	private final ArticleRepository articleRepository;
 	private final CommentLikeRepository commentLikeRepository;
-	
+
 	public CommentResponseDto createComment(Long articleId, String body) {
 
 		Article article = articleRepository.findById(articleId)
