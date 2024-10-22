@@ -96,7 +96,7 @@ public class ArticleController {
 	) {
 		articleLikeService.createArticleLike(articleId, member);
 		return ResponseEntity
-			.status(HttpStatus.CREATED)
+			.status(HttpStatus.NO_CONTENT)
 			.build();
 	}
 }
