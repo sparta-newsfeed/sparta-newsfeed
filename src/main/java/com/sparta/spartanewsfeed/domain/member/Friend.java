@@ -1,6 +1,7 @@
 package com.sparta.spartanewsfeed.domain.member;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 import org.springframework.data.annotation.CreatedDate;
 
@@ -55,4 +56,14 @@ public class Friend {
 		this.status = friendStatus;
 	}
 
+	public Optional<Member> findFriend(Member member) {
+		if (requestMember.isUserIdEqual(member.getId())) {
+			return Optional.ofNullable(responseMember);
+		}
+		if (responseMember.isUserIdEqual(member.getId())) {
+			return Optional.ofNullable(requestMember);
+		}
+
+		return Optional.empty();
+	}
 }

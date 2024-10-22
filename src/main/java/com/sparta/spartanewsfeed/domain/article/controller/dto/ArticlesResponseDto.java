@@ -1,6 +1,9 @@
 package com.sparta.spartanewsfeed.domain.article.controller.dto;
 
+import java.util.List;
+
 import com.sparta.spartanewsfeed.domain.article.entity.Article;
+import com.sparta.spartanewsfeed.domain.comment.controller.dto.CommentResponseDto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -11,26 +14,21 @@ import lombok.Setter;
 @Setter
 @Builder
 @AllArgsConstructor
-public class ArticleResponseDto {
+public class ArticlesResponseDto {
 
 	private Long id;
 	private String title;
 	private String body;
+	private int commentCounts;
 	private boolean isLiked;
 
-	public static ArticleResponseDto from(Article article) {
-		return ArticleResponseDto.builder()
+	public static ArticlesResponseDto from(Article article) {
+		List<CommentResponseDto> commentList = article.getComments() == null ? List.of() :
+			article.getComments().stream().map(CommentResponseDto::from).toList();
+		return ArticlesResponseDto.builder()
 			.id(article.getId())
 			.title(article.getTitle())
-			.body(article.getBody())
-			.build();
-	}
-
-	public static ArticleResponseDto of(Article article, Boolean isLiked) {
-		return ArticleResponseDto.builder()
-			.id(article.getId())
-			.title(article.getTitle())
-			.isLiked(isLiked)
+			.commentCounts(commentList.size())
 			.body(article.getBody())
 			.build();
 	}
