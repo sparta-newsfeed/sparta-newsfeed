@@ -2,6 +2,7 @@ package com.sparta.spartanewsfeed.domain.article.controller;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PagedModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.sparta.spartanewsfeed.domain.article.controller.dto.ArticleCreateDto;
 import com.sparta.spartanewsfeed.domain.article.controller.dto.ArticleResponseDto;
 import com.sparta.spartanewsfeed.domain.article.controller.dto.ArticleUpdateDto;
+import com.sparta.spartanewsfeed.domain.article.controller.dto.ArticlesResponseDto;
 import com.sparta.spartanewsfeed.domain.article.service.ArticleService;
 import com.sparta.spartanewsfeed.domain.member.Member;
 
@@ -31,13 +33,14 @@ public class ArticleController {
 	private final ArticleService articleService;
 
 	@GetMapping
-	public ResponseEntity<Page<ArticleResponseDto>> retrieveArticles(
+	public ResponseEntity<PagedModel<ArticlesResponseDto>> retrieveArticles(
 		@RequestAttribute("member") Member member,
 		Pageable pageable
 	) {
+		Page<ArticlesResponseDto> articles = articleService.retrieveArticles(pageable, member);
 		return ResponseEntity
 			.status(HttpStatus.OK)
-			.body(articleService.retrieveArticles(pageable, member));
+			.body(new PagedModel<>(articles));
 	}
 
 	@GetMapping("/{id}")

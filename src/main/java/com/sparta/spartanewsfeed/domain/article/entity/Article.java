@@ -3,6 +3,8 @@ package com.sparta.spartanewsfeed.domain.article.entity;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.hibernate.annotations.BatchSize;
+
 import com.sparta.spartanewsfeed.domain.Timestamp;
 import com.sparta.spartanewsfeed.domain.comment.entity.Comment;
 import com.sparta.spartanewsfeed.domain.member.Member;
@@ -45,6 +47,7 @@ public class Article extends Timestamp {
 	@JoinColumn(name = "member_id")
 	private Member author;
 
+	@BatchSize(size = 10)
 	@OneToMany(mappedBy = "article", cascade = CascadeType.REMOVE)
 	private List<Comment> comments = new ArrayList<>();
 

@@ -7,6 +7,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.sparta.spartanewsfeed.domain.article.controller.dto.ArticleResponseDto;
+import com.sparta.spartanewsfeed.domain.article.controller.dto.ArticlesResponseDto;
 import com.sparta.spartanewsfeed.domain.article.entity.Article;
 import com.sparta.spartanewsfeed.domain.article.repository.ArticleRepository;
 import com.sparta.spartanewsfeed.domain.member.Member;
@@ -23,10 +24,10 @@ public class ArticleService {
 	private final FriendService friendService;
 	private final ArticleRepository articleRepository;
 
-	public Page<ArticleResponseDto> retrieveArticles(Pageable pageable, Member member) {
+	public Page<ArticlesResponseDto> retrieveArticles(Pageable pageable, Member member) {
 		List<Member> friends = friendService.getRelatedFriends(member);
 		return articleRepository.findAllByAuthorIn(friends, pageable)
-			.map(ArticleResponseDto::from);
+			.map(ArticlesResponseDto::from);
 	}
 
 	public ArticleResponseDto retrieveArticle(Long id) {

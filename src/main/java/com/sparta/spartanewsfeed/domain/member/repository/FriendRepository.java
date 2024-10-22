@@ -1,7 +1,6 @@
 package com.sparta.spartanewsfeed.domain.member.repository;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -20,6 +19,6 @@ public interface FriendRepository extends JpaRepository<Friend, Long> {
 	Page<Friend> findByStatusAndRequestMemberOrResponseMember(FriendStatus friendStatus, Member member, Member member1,
 		Pageable pageable);
 
-	@Query("SELECT f FROM Friend f WHERE f.requestMember = :member OR f.responseMember = :member")
-	Optional<List<Friend>> findFriendsByMember(@Param("member") Member member);
+	@Query("SELECT f FROM Friend f WHERE f.responseMember = :member OR f.requestMember = :member")
+	List<Friend> findFriendsByMember(@Param("member") Member member);
 }

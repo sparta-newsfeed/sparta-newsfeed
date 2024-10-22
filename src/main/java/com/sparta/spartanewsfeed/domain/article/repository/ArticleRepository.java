@@ -12,6 +12,6 @@ import com.sparta.spartanewsfeed.domain.article.entity.Article;
 import com.sparta.spartanewsfeed.domain.member.Member;
 
 public interface ArticleRepository extends JpaRepository<Article, Long> {
-	@Query("SELECT a FROM Article a JOIN FETCH a.author au JOIN FETCH a.comments c WHERE au IN :authors")
+	@Query("SELECT distinct a FROM Article a WHERE a.author IN :authors")
 	Page<Article> findAllByAuthorIn(@Param("authors") List<Member> authors, Pageable pageable);
 }

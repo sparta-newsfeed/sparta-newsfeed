@@ -70,8 +70,7 @@ public class FriendService {
 	}
 
 	public List<Member> getRelatedFriends(Member requestMember) {
-		List<Friend> friends = friendRepository.findFriendsByMember(requestMember)
-			.orElse(List.of());
+		List<Friend> friends = friendRepository.findFriendsByMember(requestMember);
 
 		return friends.stream()
 			.map(friend -> friend.findFriend(requestMember))
