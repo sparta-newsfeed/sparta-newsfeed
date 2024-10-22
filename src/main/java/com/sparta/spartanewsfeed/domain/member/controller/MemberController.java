@@ -14,7 +14,7 @@ import java.util.List;
 public class MemberController {
 	private final MemberService memberService;
 
-	public MemberController(final MemberService memberService) {
+	public MemberController(MemberService memberService) {
 		this.memberService = memberService;
 	}
 
@@ -26,14 +26,14 @@ public class MemberController {
 
 	@GetMapping("/{memberId}")
 	@ResponseStatus(HttpStatus.OK)
-	public ResponseMember findById(@PathVariable(name = "memberId") Long memberId) {
-		return memberService.findById(memberId);
+	public OtherMemberProfile findById(@RequestAttribute(name = "member") Member member,
+								   @PathVariable(name = "memberId") Long memberId) {
+		return memberService.findById(member, memberId);
 	}
-
-	// 충돌 우려 페이지네이션 작업하지 않음, 브랜치 합친 이후 추가할 예정
-	@GetMapping("/{nameOrNickname}")
+	
+	@GetMapping("/search-condition")
 	@ResponseStatus(HttpStatus.OK)
-	public List<ResponseMember> findAllByNameOrNickname(@PathVariable(name = "nameOrNickname") String nameOrNickname) {
+	public List<ResponseMember> findAllByNameOrNickname(@RequestParam(name = "nameOrNickname", defaultValue = "") String nameOrNickname) {
 		return memberService.findAllByNameOrNickname(nameOrNickname);
 	}
 

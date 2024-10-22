@@ -1,5 +1,7 @@
 package com.sparta.spartanewsfeed.domain.member.service;
 
+import com.sparta.spartanewsfeed.domain.member.Friend;
+import com.sparta.spartanewsfeed.domain.member.repository.FriendRepository;
 import com.sparta.spartanewsfeed.domain.jwt.config.PasswordEncoder;
 import com.sparta.spartanewsfeed.domain.member.Member;
 import com.sparta.spartanewsfeed.domain.member.dto.*;
@@ -14,14 +16,21 @@ import java.util.List;
 @RequiredArgsConstructor
 public class MemberService {
     private final MemberRepository memberRepository;
+    private final FriendRepository friendRepository;
     private final PasswordEncoder passwordEncoder;
 
     @Transactional(readOnly = true)
-    public ResponseMember findById(Long id) {
+    public OtherMemberProfile findById(Member member, Long id) {
         Member foundMember = memberRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("해당 ID 를 가진 회원을 찾을 수 없습니다."));
 
-        return ResponseMember.make(foundMember);
+        List<Friend> foundFriend = friendRepository.findAll(member.getId(), id);
+        boolean isFriend = !foundFriend.isEmpty();
+
+        return OtherMemberProfile.builder()
+                .responseMember(ResponseMember.make(foundMember))
+                .isFriend(isFriend)
+                .build();
     }
 
     @Transactional(readOnly = true)

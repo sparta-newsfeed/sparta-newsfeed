@@ -56,16 +56,16 @@ public class JwtUtil {
 	}
 
 	//JWT 생성
-	// 토큰 생성
-	public String createToken(String username, UserRole role) {
-		Date date = new Date();
+		// 토큰 생성
+		public String createToken(String email, UserRole role) {
+			Date date = new Date();
 
 		// 토큰 만료시간
 		// 60분
 		long TOKEN_TIME = 60 * 60 * 1000L;
 		return BEARER_PREFIX +
 			Jwts.builder()
-				.setSubject(username) // 사용자 식별자값(ID)
+				.setSubject(email) // 사용자 식별자값(email)
 				.claim(AUTHORIZATION_KEY, role) // 사용자 권한
 				.setExpiration(new Date(date.getTime() + TOKEN_TIME)) // 만료 시간
 				.setIssuedAt(date) // 발급일
