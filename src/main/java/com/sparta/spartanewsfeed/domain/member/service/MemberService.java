@@ -1,6 +1,6 @@
 package com.sparta.spartanewsfeed.domain.member.service;
 
-import com.sparta.spartanewsfeed.domain.jwt.config.PasswordEncoder;
+import com.sparta.spartanewsfeed.jwt.config.PasswordEncoder;
 import com.sparta.spartanewsfeed.domain.member.Member;
 import com.sparta.spartanewsfeed.domain.member.dto.*;
 import com.sparta.spartanewsfeed.domain.member.repository.MemberRepository;
