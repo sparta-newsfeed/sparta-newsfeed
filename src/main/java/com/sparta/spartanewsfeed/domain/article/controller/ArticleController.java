@@ -19,6 +19,7 @@ import com.sparta.spartanewsfeed.domain.article.controller.dto.ArticleCreateDto;
 import com.sparta.spartanewsfeed.domain.article.controller.dto.ArticleResponseDto;
 import com.sparta.spartanewsfeed.domain.article.controller.dto.ArticleUpdateDto;
 import com.sparta.spartanewsfeed.domain.article.controller.dto.ArticlesResponseDto;
+import com.sparta.spartanewsfeed.domain.article.service.ArticleLikeService;
 import com.sparta.spartanewsfeed.domain.article.service.ArticleService;
 import com.sparta.spartanewsfeed.domain.member.Member;
 
@@ -26,11 +27,12 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/articles")
+@RequestMapping("/api/articles")
 @RequiredArgsConstructor
 public class ArticleController {
 
 	private final ArticleService articleService;
+	private final ArticleLikeService articleLikeService;
 
 	@GetMapping
 	public ResponseEntity<PagedModel<ArticlesResponseDto>> retrieveArticles(
@@ -85,5 +87,16 @@ public class ArticleController {
 		return ResponseEntity
 			.status(HttpStatus.OK)
 			.body(articleService.deleteArticle(id, member));
+	}
+
+	@PostMapping("/{articleId}/like")
+	public ResponseEntity<Void> createArticleLike(
+		@RequestAttribute("member") Member member,
+		@PathVariable Long articleId
+	) {
+		articleLikeService.createArticleLike(articleId, member);
+		return ResponseEntity
+			.status(HttpStatus.CREATED)
+			.build();
 	}
 }
