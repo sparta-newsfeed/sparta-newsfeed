@@ -13,7 +13,7 @@ public class CommentResponseDto {
 
 	private Long id;
 	private Long articleId;
-	private Long memberId;
+	private String nickname;
 	private String body;
 	private LocalDateTime createdAt;
 	private LocalDateTime updatedAt;
@@ -23,7 +23,7 @@ public class CommentResponseDto {
 		return CommentResponseDto.builder()
 			.id(comment.getId())
 			.articleId(comment.getArticle().getId())
-			.memberId(comment.getAuthor().getId())
+			.nickname(comment.getAuthor().getNickname())
 			.body(comment.getBody())
 			.createdAt(comment.getCreatedAt())
 			.updatedAt(comment.getUpdatedAt())
@@ -34,7 +34,7 @@ public class CommentResponseDto {
 		return CommentResponseDto.builder()
 			.id(comment.getId())
 			.articleId(comment.getArticle().getId())
-			.memberId(comment.getAuthor().getId())
+			.nickname(comment.getAuthor().getNickname())
 			.body(comment.getBody())
 			.createdAt(comment.getCreatedAt())
 			.updatedAt(comment.getUpdatedAt())
