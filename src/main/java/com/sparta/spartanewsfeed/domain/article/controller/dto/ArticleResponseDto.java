@@ -26,7 +26,7 @@ public class ArticleResponseDto {
 			.build();
 	}
 
-	public static ArticleResponseDto of(Article article, Boolean isLiked) {
+	public static ArticleResponseDto of(Article article, boolean isLiked) {
 		return ArticleResponseDto.builder()
 			.id(article.getId())
 			.title(article.getTitle())
