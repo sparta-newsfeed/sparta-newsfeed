@@ -78,9 +78,12 @@ public class ArticleController {
 	}
 
 	@DeleteMapping("/{id}")
-	public ResponseEntity<ArticleResponseDto> deleteArticle(@PathVariable Long id) {
+	public ResponseEntity<ArticleResponseDto> deleteArticle(
+		@RequestAttribute("member") Member member,
+		@PathVariable Long id
+	) {
 		return ResponseEntity
 			.status(HttpStatus.OK)
-			.body(articleService.deleteArticle(id));
+			.body(articleService.deleteArticle(id, member));
 	}
 }
