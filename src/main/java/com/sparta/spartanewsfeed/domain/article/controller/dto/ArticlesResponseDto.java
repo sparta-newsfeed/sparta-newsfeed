@@ -20,7 +20,7 @@ public class ArticlesResponseDto {
 	private String title;
 	private String body;
 	private int commentCounts;
-	private Boolean isLiked;
+	private boolean isLiked;
 
 	public static ArticlesResponseDto from(Article article) {
 		List<CommentResponseDto> commentList = article.getComments() == null ? List.of() :
