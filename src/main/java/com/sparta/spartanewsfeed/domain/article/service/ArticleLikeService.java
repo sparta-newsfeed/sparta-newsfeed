@@ -17,18 +17,19 @@ public class ArticleLikeService {
 	private final ArticleRepository articleRepository;
 	private final ArticleLikeRepository articleLikeRepository;
 
-	public void createArticleLike(Long articleId, Member member) {
+	public void toggleLike(Long articleId, Member member) {
 		Article article = articleRepository.findById(articleId)
 			.orElseThrow(() -> new IllegalArgumentException("존재하지 않는 게시물 입니다."));
-		if (articleLikeRepository.existsArticleLikeByArticleAndMember(article, member)) {
-			articleLikeRepository.deleteArticleLikeByArticleAndMember(article, member);
-			return;
-		}
 
-		ArticleLike like = ArticleLike.builder()
-			.article(article)
-			.member(member)
-			.build();
-		articleLikeRepository.save(like);
+		articleLikeRepository.findArticleLikeByArticleAndMember(article, member)
+			.ifPresentOrElse(
+				articleLikeRepository::delete,
+				() -> {
+					ArticleLike articleLike = ArticleLike.builder()
+						.article(article)
+						.member(member)
+						.build();
+					articleLikeRepository.save(articleLike);
+				});
 	}
 }

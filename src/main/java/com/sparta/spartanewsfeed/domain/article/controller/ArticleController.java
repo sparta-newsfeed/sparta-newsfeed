@@ -90,11 +90,11 @@ public class ArticleController {
 	}
 
 	@PostMapping("/{articleId}/like")
-	public ResponseEntity<Void> createArticleLike(
+	public ResponseEntity<Void> toggleLike(
 		@RequestAttribute("member") Member member,
 		@PathVariable Long articleId
 	) {
-		articleLikeService.createArticleLike(articleId, member);
+		articleLikeService.toggleLike(articleId, member);
 		return ResponseEntity
 			.status(HttpStatus.NO_CONTENT)
 			.build();
