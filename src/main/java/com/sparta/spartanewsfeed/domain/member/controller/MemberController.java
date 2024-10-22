@@ -29,11 +29,10 @@ public class MemberController {
 	public ResponseMember findById(@PathVariable(name = "memberId") Long memberId) {
 		return memberService.findById(memberId);
 	}
-
-	// 충돌 우려 페이지네이션 작업하지 않음, 브랜치 합친 이후 추가할 예정
-	@GetMapping("/{nameOrNickname}")
+	
+	@GetMapping("/search-condition")
 	@ResponseStatus(HttpStatus.OK)
-	public List<ResponseMember> findAllByNameOrNickname(@PathVariable(name = "nameOrNickname") String nameOrNickname) {
+	public List<ResponseMember> findAllByNameOrNickname(@RequestParam(name = "nameOrNickname", defaultValue = "") String nameOrNickname) {
 		return memberService.findAllByNameOrNickname(nameOrNickname);
 	}
 

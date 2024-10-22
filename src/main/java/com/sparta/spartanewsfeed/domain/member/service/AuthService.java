@@ -1,6 +1,6 @@
 package com.sparta.spartanewsfeed.domain.member.service;
 
-import static com.sparta.spartanewsfeed.jwt.jwt.JwtUtil.*;
+import static com.sparta.spartanewsfeed.domain.jwt.jwt.JwtUtil.*;
 
 import java.util.Optional;
 
@@ -11,7 +11,7 @@ import com.sparta.spartanewsfeed.jwt.config.PasswordEncoder;
 import com.sparta.spartanewsfeed.domain.member.UserRole;
 import com.sparta.spartanewsfeed.domain.member.dto.LoginRequestDto;
 import com.sparta.spartanewsfeed.domain.member.dto.SignupRequestDto;
-import com.sparta.spartanewsfeed.jwt.jwt.JwtUtil;
+import com.sparta.spartanewsfeed.domain.jwt.jwt.JwtUtil;
 import com.sparta.spartanewsfeed.domain.member.repository.MemberRepository;
 
 import jakarta.servlet.http.Cookie;

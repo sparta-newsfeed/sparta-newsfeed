@@ -1,4 +1,4 @@
-package com.sparta.spartanewsfeed.jwt.jwt;
+package com.sparta.spartanewsfeed.domain.jwt.jwt;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
