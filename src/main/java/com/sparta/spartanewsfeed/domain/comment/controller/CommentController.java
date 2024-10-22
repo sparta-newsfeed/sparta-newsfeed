@@ -64,9 +64,10 @@ public class CommentController {
 	}
 
 	@PostMapping("/comment/{commentId}/like")
-	public ResponseEntity<Integer> likeComment(@PathVariable Long commentId,
+	public ResponseEntity<CommentResponseDto> likeComment(@PathVariable Long commentId,
 		@CookieValue(value = "Authorization") String authorization) {
-		return ResponseEntity.status(HttpStatus.CREATED).body(commentLikeService.likeComment(commentId, authorization));
+		commentLikeService.likeComment(commentId, authorization);
+		return ResponseEntity.status(HttpStatus.CREATED).build();
 	}
 
 }

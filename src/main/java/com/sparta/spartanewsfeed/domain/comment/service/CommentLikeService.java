@@ -42,7 +42,6 @@ public class CommentLikeService {
 		} else {
 			commentLikeRepository.deleteByCommentIdAndMemberId(commentId, member.getId());
 		}
-
 	}
 
 	private Member findByEmail(String authorization) {
