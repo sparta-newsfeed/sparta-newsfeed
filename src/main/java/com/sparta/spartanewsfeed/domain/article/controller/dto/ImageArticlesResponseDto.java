@@ -13,7 +13,7 @@ import lombok.Getter;
 
 @Getter
 @Builder
-public class ImageArticleResponseDto {
+public class ImageArticlesResponseDto {
 	private Long id;
 	private String title;
 	private String body;
@@ -22,7 +22,7 @@ public class ImageArticleResponseDto {
 	private List<String> articleImageUrls;
 	private LocalDateTime updatedAt;
 
-	public static ImageArticleResponseDto from(Article article) {
+	public static ImageArticlesResponseDto from(Article article) {
 		ResponseMember responseAuthor = ResponseMember.make(article.getAuthor());
 
 		List<String> imageUrls = Optional.ofNullable(article.getArticleImages())
@@ -31,13 +31,33 @@ public class ImageArticleResponseDto {
 			.map(ArticleImage::getImagePath)
 			.toList();
 
-		return ImageArticleResponseDto.builder()
+		return ImageArticlesResponseDto.builder()
 			.id(article.getId())
 			.title(article.getTitle())
 			.author(responseAuthor)
 			.updatedAt(article.getUpdatedAt())
 			.body(article.getBody())
 			.articleImageUrls(imageUrls)
+			.build();
+	}
+
+	public static ImageArticlesResponseDto of(Article article, boolean isLiked) {
+		ResponseMember responseAuthor = ResponseMember.make(article.getAuthor());
+
+		List<String> imageUrls = Optional.ofNullable(article.getArticleImages())
+			.orElse(List.of()) // null일 경우 빈 리스트 반환
+			.stream()
+			.map(ArticleImage::getImagePath)
+			.toList();
+
+		return ImageArticlesResponseDto.builder()
+			.id(article.getId())
+			.title(article.getTitle())
+			.author(responseAuthor)
+			.isLiked(isLiked)
+			.body(article.getBody())
+			.articleImageUrls(imageUrls)
+			.updatedAt(article.getUpdatedAt())
 			.build();
 	}
 

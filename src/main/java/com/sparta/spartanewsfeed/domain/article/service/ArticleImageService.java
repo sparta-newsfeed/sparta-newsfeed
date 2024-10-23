@@ -30,6 +30,12 @@ public class ArticleImageService {
 			// 저장 경로 설정
 			String uploadsDir = "src/main/resources/static/uploads/images/";
 
+			// 이미지가 있는지 확인
+			if (images == null || images.isEmpty()) {
+				System.out.println("이미지가 없습니다.");
+				return;
+			}
+
 			for (MultipartFile image : images) {
 				String dbFilePath = saveImage(image, uploadsDir);
 
@@ -37,9 +43,11 @@ public class ArticleImageService {
 					.imagePath(dbFilePath)
 					.article(article)
 					.build();
-				
+
+				System.out.println("이미지 저장 시작: " + dbFilePath);
 				article.getArticleImages().add(articleImage); // Article의 이미지 리스트에 추가
 				articleImageRepository.save(articleImage);
+				System.out.println("이미지 저장 완료: " + dbFilePath);
 			}
 
 		} catch (IOException e) {

@@ -26,7 +26,7 @@ import com.sparta.spartanewsfeed.domain.article.controller.dto.ArticleResponseDt
 import com.sparta.spartanewsfeed.domain.article.controller.dto.ArticleUpdateDto;
 import com.sparta.spartanewsfeed.domain.article.controller.dto.ArticlesResponseDto;
 import com.sparta.spartanewsfeed.domain.article.controller.dto.ImageArticleCreateDto;
-import com.sparta.spartanewsfeed.domain.article.controller.dto.ImageArticleResponseDto;
+import com.sparta.spartanewsfeed.domain.article.controller.dto.ImageArticlesResponseDto;
 import com.sparta.spartanewsfeed.domain.article.service.ArticleLikeService;
 import com.sparta.spartanewsfeed.domain.article.service.ArticleService;
 import com.sparta.spartanewsfeed.domain.member.Member;
@@ -76,26 +76,6 @@ public class ArticleController {
 			.body(articleService.createArticle(title, body, member));
 	}
 
-	// 추가 이미지 컨트롤러
-	@PostMapping("/image")
-	public ResponseEntity<ImageArticleResponseDto> createImageArticle(
-		@RequestAttribute("member") Member member,
-		@RequestParam(value = "images", required = false) List<MultipartFile> images,
-		@ModelAttribute ImageArticleCreateDto req
-	) {
-		String title = req.getTitle();
-		String body = req.getBody();
-
-		// 디버깅: 로그를 추가하여 값 확인
-		System.out.println("Title: " + title);
-		System.out.println("Body: " + body);
-		System.out.println("Images count: " + (images != null ? images.size() : 0));
-
-		return ResponseEntity
-			.status(HttpStatus.CREATED)
-			.body(articleService.createImageArticle(title, body, images, member));
-	}
-
 	@PatchMapping("/{id}")
 	public ResponseEntity<ArticleResponseDto> updateArticle(
 		@RequestAttribute("member") Member member,
@@ -130,4 +110,59 @@ public class ArticleController {
 			.status(HttpStatus.NO_CONTENT)
 			.build();
 	}
+
+	//---------------------------------------------------------------------------------------------
+	// 추가 이미지 컨트롤러
+
+	@GetMapping("/image")
+	public ResponseEntity<PagedModel<ImageArticlesResponseDto>> retrieveImageArticles(
+		@RequestAttribute("member") Member member,
+		@PageableDefault Pageable pageable
+	) {
+		Page<ImageArticlesResponseDto> articles = articleService.retrieveImageArticles(pageable, member);
+		return ResponseEntity
+			.status(HttpStatus.OK)
+			.body(new PagedModel<>(articles));
+	}
+
+	@GetMapping("/image/{id}")
+	public ResponseEntity<ImageArticlesResponseDto> retrieveImageArticle(
+		@PathVariable Long id,
+		@RequestAttribute("member") Member member
+	) {
+		return ResponseEntity
+			.status(HttpStatus.OK)
+			.body(articleService.retrieveImageArticle(id, member));
+	}
+
+	@PostMapping("/image")
+	public ResponseEntity<ImageArticlesResponseDto> createImageArticle(
+		@RequestAttribute("member") Member member,
+		@RequestParam(value = "images", required = false) List<MultipartFile> images,
+		@ModelAttribute ImageArticleCreateDto req
+	) {
+		String title = req.getTitle();
+		String body = req.getBody();
+
+		return ResponseEntity
+			.status(HttpStatus.CREATED)
+			.body(articleService.createImageArticle(title, body, images, member));
+	}
+
+	@PatchMapping("/image/{id}")
+	public ResponseEntity<ImageArticlesResponseDto> updateImageArticle(
+		@PathVariable Long id,
+		@RequestAttribute("member") Member member,
+		@RequestParam(value = "images", required = false) List<MultipartFile> images,
+		@ModelAttribute ImageArticleCreateDto req // 업데이트할 필드를 포함하는 DTO
+	) {
+		// Service를 호출하여 이미지를 포함한 아티클을 업데이트
+		ImageArticlesResponseDto updatedArticle = articleService.updateAImageArticle(id, req.getTitle(), req.getBody(),
+			images, member);
+
+		return ResponseEntity
+			.status(HttpStatus.OK)
+			.body(updatedArticle);
+	}
+
 }

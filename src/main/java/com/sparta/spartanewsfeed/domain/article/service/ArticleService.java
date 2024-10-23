@@ -13,8 +13,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.sparta.spartanewsfeed.domain.article.controller.dto.ArticleResponseDto;
 import com.sparta.spartanewsfeed.domain.article.controller.dto.ArticlesResponseDto;
-import com.sparta.spartanewsfeed.domain.article.controller.dto.ImageArticleResponseDto;
+import com.sparta.spartanewsfeed.domain.article.controller.dto.ImageArticlesResponseDto;
 import com.sparta.spartanewsfeed.domain.article.entity.Article;
+import com.sparta.spartanewsfeed.domain.article.entity.ArticleImage;
 import com.sparta.spartanewsfeed.domain.article.repository.ArticleLikeRepository;
 import com.sparta.spartanewsfeed.domain.article.repository.ArticleRepository;
 import com.sparta.spartanewsfeed.domain.member.Member;
@@ -64,9 +65,70 @@ public class ArticleService {
 		return ArticleResponseDto.from(savedArticle);
 	}
 
-	// 이미지 전용 서비스 메서드 (임시 추가)
+	public ArticleResponseDto updateArticle(Long id, String title, String body, Member member) {
+		Article article = articleRepository.findById(id)
+			.orElseThrow(() -> new NotFoundEntityException(NOT_FOUND_ARTICLE));
+		verifyAuthorOrAdmin(article, member);
+		article.update(title, body);
+		Article savedArticle = articleRepository.save(article);
+		return ArticleResponseDto.from(savedArticle);
+	}
+
 	@Transactional
-	public ImageArticleResponseDto createImageArticle(String title, String body, List<MultipartFile> images,
+	public ArticleResponseDto deleteArticle(Long id, Member member) {
+		Article article = articleRepository.findById(id)
+			.orElseThrow(() -> new NotFoundEntityException(NOT_FOUND_ARTICLE));
+		verifyAuthorOrAdmin(article, member);
+		articleRepository.delete(article);
+		return ArticleResponseDto.from(article);
+	}
+
+	private void verifyAuthorOrAdmin(Article article, Member member) {
+		if (!(article.isAuthor(member.getId()) || member.isAdmin())) {
+			throw new HasNotPermissionException(HAS_NOT_PERMISSION);
+		}
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	// 이미지 아티클 서비스
+
+	@Transactional
+	public Page<ImageArticlesResponseDto> retrieveImageArticles(Pageable pageable, Member member) {
+		List<Member> friends = friendService.getRelatedFriends(member);
+		// friends.add(member);
+		return articleRepository.findAllByAuthorIn(friends, pageable)
+			.map(ImageArticlesResponseDto::from);
+	}
+
+	@Transactional
+	public ImageArticlesResponseDto retrieveImageArticle(Long id, Member member) {
+		return articleRepository.findById(id)
+			.map((article -> {
+				boolean isLike = articleLikeRepository.findArticleLikeByArticleAndMember(article, member)
+					.isPresent();
+				return ImageArticlesResponseDto.of(article, isLike);
+			}))
+			.orElseThrow(() -> new NotFoundEntityException(NOT_FOUND_ARTICLE));
+	}
+
+	@Transactional
+	public ImageArticlesResponseDto retrieveImageArticle(Long id) {
+		return articleRepository.findById(id)
+			.map((article -> {
+
+				// 이미지 URL 리스트 생성
+				List<String> imageUrls = article.getArticleImages()
+					.stream()
+					.map(ArticleImage::getImagePath) // ArticleImage 엔티티에서 URL 추출
+					.toList();
+
+				return ImageArticlesResponseDto.from(article);
+			}))
+			.orElseThrow(() -> new NotFoundEntityException(NOT_FOUND_ARTICLE));
+	}
+
+	@Transactional
+	public ImageArticlesResponseDto createImageArticle(String title, String body, List<MultipartFile> images,
 		Member member) {
 		Article article = Article.builder()
 			.title(title)
@@ -82,29 +144,29 @@ public class ArticleService {
 			articleImageService.uploadImage(article, images);
 
 		}
-		return ImageArticleResponseDto.from(savedArticle);
+		return ImageArticlesResponseDto.from(savedArticle);
 	}
 
-	public ArticleResponseDto updateArticle(Long id, String title, String body, Member member) {
+	@Transactional
+	public ImageArticlesResponseDto updateAImageArticle(Long id, String title, String body, List<MultipartFile> images,
+		Member member) {
 		Article article = articleRepository.findById(id)
 			.orElseThrow(() -> new NotFoundEntityException(NOT_FOUND_ARTICLE));
 		verifyAuthorOrAdmin(article, member);
 		article.update(title, body);
-		Article savedArticle = articleRepository.save(article);
-		return ArticleResponseDto.from(savedArticle);
-	}
 
-	public ArticleResponseDto deleteArticle(Long id, Member member) {
-		Article article = articleRepository.findById(id)
-			.orElseThrow(() -> new NotFoundEntityException(NOT_FOUND_ARTICLE));
-		verifyAuthorOrAdmin(article, member);
-		articleRepository.delete(article);
-		return ArticleResponseDto.from(article);
-	}
-
-	private void verifyAuthorOrAdmin(Article article, Member member) {
-		if (!(article.isAuthor(member.getId()) || member.isAdmin())) {
-			throw new HasNotPermissionException(HAS_NOT_PERMISSION);
+		// 이미지가 있을 경우 이미지 업로드 처리
+		if (images != null && !images.isEmpty()) {
+			// 기존 이미지를 삭제하고 새로운 이미지로 대체하는 경우라면, 기존 이미지 삭제 로직 추가 가능
+			articleImageService.uploadImage(article, images);
 		}
+
+		// 업데이트된 아티클 저장
+		Article savedArticle = articleRepository.save(article);
+
+		// 업데이트된 아티클을 DTO로 변환하여 반환
+		return ImageArticlesResponseDto.from(savedArticle);
 	}
+
+	// 삭제 메서드는 유지 가능
 }
