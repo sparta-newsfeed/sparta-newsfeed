@@ -3,7 +3,9 @@ package com.sparta.spartanewsfeed.domain.article.controller;
 import java.util.List;
 
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.data.web.PagedModel;
 import org.springframework.http.HttpStatus;
@@ -45,8 +47,10 @@ public class ArticleController {
 	@GetMapping
 	public ResponseEntity<PagedModel<ArticlesResponseDto>> retrieveArticles(
 		@RequestAttribute("member") Member member,
-		@PageableDefault Pageable pageable
+		@RequestParam(required = false, defaultValue = "0") int page,
+		@RequestParam(required = false, defaultValue = "10") int size
 	) {
+		Pageable pageable = PageRequest.of(page, size, Sort.by("updatedAt").descending());
 		Page<ArticlesResponseDto> articles = articleService.retrieveArticles(pageable, member);
 		return ResponseEntity
 			.status(HttpStatus.OK)

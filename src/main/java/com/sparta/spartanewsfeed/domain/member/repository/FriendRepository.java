@@ -22,9 +22,15 @@ public interface FriendRepository extends JpaRepository<Friend, Long> {
 	@Query("SELECT f FROM Friend f join fetch f.responseMember join fetch f.requestMember WHERE f.responseMember = :member OR f.requestMember = :member")
 	List<Friend> findFriendsByMember(@Param("member") Member member);
 
+	@Query("SELECT f FROM Friend f join fetch f.responseMember join fetch f.requestMember WHERE (f.responseMember = :member OR f.requestMember = :member) and f.status = :status")
+	List<Friend> findFriendByMemberAndStatus(@Param("member") Member member, FriendStatus status);
+
+	@Query("SELECT f FROM Friend f join fetch f.responseMember WHERE f.responseMember = :member and f.status = :status")
+	List<Friend> findRequestFriendByMemberAndStatus(@Param("member") Member member, FriendStatus status);
+
 	@Query(value = "SELECT * FROM friend " +
-			"WHERE status = 'ACCEPT' " +
-			"AND ((request_id = :loginMemberId AND response_id = :targetMemberId) OR (request_id = :targetMemberId AND response_id = :loginMemberId))",
-			nativeQuery = true)
+		"WHERE status = 'ACCEPT' " +
+		"AND ((request_id = :loginMemberId AND response_id = :targetMemberId) OR (request_id = :targetMemberId AND response_id = :loginMemberId))",
+		nativeQuery = true)
 	List<Friend> findAll(@Param("loginMemberId") Long loginMemberId, @Param("targetMemberId") Long targetMemberId);
 }
