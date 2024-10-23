@@ -1,15 +1,19 @@
 package com.sparta.spartanewsfeed.domain.article.service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.sparta.spartanewsfeed.domain.article.controller.dto.ArticleResponseDto;
 import com.sparta.spartanewsfeed.domain.article.controller.dto.ArticlesResponseDto;
+import com.sparta.spartanewsfeed.domain.article.controller.dto.ImageArticleResponseDto;
 import com.sparta.spartanewsfeed.domain.article.entity.Article;
 import com.sparta.spartanewsfeed.domain.article.repository.ArticleLikeRepository;
 import com.sparta.spartanewsfeed.domain.article.repository.ArticleRepository;
@@ -24,6 +28,7 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class ArticleService {
 
+	private final ArticleImageService articleImageService;
 	private final FriendService friendService;
 	private final ArticleRepository articleRepository;
 	private final ArticleLikeRepository articleLikeRepository;
@@ -51,6 +56,27 @@ public class ArticleService {
 
 		Article savedArticle = articleRepository.save(article);
 		return ArticleResponseDto.from(savedArticle);
+	}
+
+	// 이미지 전용 서비스 메서드 (임시 추가)
+	@Transactional
+	public ImageArticleResponseDto createImageArticle(String title, String body, List<MultipartFile> images,
+		Member member) {
+		Article article = Article.builder()
+			.title(title)
+			.body(body)
+			.author(member)
+			.comments(List.of())
+			.articleImages(new ArrayList<>())
+			.build();
+
+		Article savedArticle = articleRepository.save(article);
+
+		if (images != null && !images.isEmpty()) {
+			articleImageService.uploadImage(article, images);
+
+		}
+		return ImageArticleResponseDto.from(savedArticle);
 	}
 
 	public ArticleResponseDto updateArticle(Long id, String title, String body, Member member) {
