@@ -38,7 +38,6 @@ public class CommentService {
 
 		Article article = articleRepository.findById(articleId)
 			.orElseThrow(() -> new NotFoundEntityException(NOT_FOUND_ARTICLE));
-//			.orElseThrow(() -> new IllegalArgumentException("Article id " + articleId + " not found"));
 
 		Member author = findByEmail(authorization);
 
@@ -54,7 +53,6 @@ public class CommentService {
 	public Page<CommentResponseDto> getComments(Long articleId, int page, int size, String authorization) {
 		if (!articleRepository.existsById(articleId)) {
 			throw new NotFoundEntityException(NOT_FOUND_ARTICLE);
-//			throw new IllegalArgumentException("Article id " + articleId + " not found");
 		}
 
 		Pageable pageable = PageRequest.of(page, size, Sort.by("updatedAt").descending());
@@ -74,13 +72,11 @@ public class CommentService {
 
 		Comment comment = commentRepository.findById(commentId)
 			.orElseThrow(() -> new NotFoundEntityException(NOT_FOUND_COMMENT));
-//			.orElseThrow(() -> new IllegalArgumentException("Comment id " + commentId + " not found"));
 
 		Member author = findByEmail(authorization);
 
 		if (!comment.getAuthor().equals(author)) {
 			throw new HasNotPermissionException(HAS_NOT_PERMISSION);
-//			throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You are not the author of this comment");
 		}
 
 		boolean isLiked = commentLikeRepository.existsByCommentIdAndMemberId(comment.getId(), author.getId());
@@ -93,13 +89,11 @@ public class CommentService {
 	public void deleteComment(Long commentId, String authorization) {
 		Comment comment = commentRepository.findById(commentId)
 			.orElseThrow(() -> new NotFoundEntityException(NOT_FOUND_COMMENT));
-//			.orElseThrow(() -> new IllegalArgumentException("Comment id " + commentId + " not found"));
 
 		Member author = findByEmail(authorization);
 
 		if (!comment.getAuthor().equals(author)) {
 			throw new HasNotPermissionException(HAS_NOT_PERMISSION);
-//			throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You are not the author of this comment");
 		}
 		commentRepository.delete(comment);
 	}
@@ -110,7 +104,6 @@ public class CommentService {
 
 		return memberRepository.findByEmail(claims.getSubject())
 			.orElseThrow(() -> new NotFoundEntityException(NOT_FOUND_MEMBER));
-//			.orElseThrow(() -> new IllegalArgumentException("User not found"));
 	}
 
 }
