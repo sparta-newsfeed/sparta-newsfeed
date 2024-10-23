@@ -3,6 +3,8 @@ package com.sparta.spartanewsfeed.domain.article.service;
 import java.util.List;
 
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -30,9 +32,8 @@ public class ArticleService {
 
 	public Page<ArticlesResponseDto> retrieveArticles(Pageable pageable, Member member) {
 		List<Member> friends = friendService.getRelatedFriends(member);
-		// friends.add(member);
-		return articleRepository.findAllByAuthorIn(friends, pageable)
-			.map(ArticlesResponseDto::from);
+
+		return
 	}
 
 	public ArticleResponseDto retrieveArticle(Long id, Member member) {
