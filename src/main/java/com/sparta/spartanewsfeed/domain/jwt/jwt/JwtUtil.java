@@ -31,7 +31,6 @@ import jakarta.servlet.http.HttpServletResponse;
 @Component
 public class JwtUtil {
 
-
 	// Header KEY 값
 	public static final String AUTHORIZATION_HEADER = "Authorization";
 	// 사용자 권한 값의 KEY
@@ -56,9 +55,9 @@ public class JwtUtil {
 	}
 
 	//JWT 생성
-		// 토큰 생성
-		public String createToken(String email, UserRole role) {
-			Date date = new Date();
+	// 토큰 생성
+	public String createToken(String email, UserRole role) {
+		Date date = new Date();
 
 		// 토큰 만료시간
 		// 60분
@@ -80,8 +79,9 @@ public class JwtUtil {
 
 			Cookie cookie = new Cookie(AUTHORIZATION_HEADER, token); // Name-Value
 			cookie.setPath("/");
-
-			// Response 객체에 Cookie 추가
+			cookie.setHttpOnly(true);
+			cookie.setSecure(true);
+			cookie.setAttribute("SameSite", "None");
 			res.addCookie(cookie);
 		} catch (UnsupportedEncodingException e) {
 			logger.error(e.getMessage());
@@ -124,7 +124,7 @@ public class JwtUtil {
 	// HttpServletRequest 에서 Cookie Value : JWT 가져오기
 	public String getTokenFromRequest(HttpServletRequest req) {
 		Cookie[] cookies = req.getCookies();
-		if(cookies != null) {
+		if (cookies != null) {
 			for (Cookie cookie : cookies) {
 				if (cookie.getName().equals(AUTHORIZATION_HEADER)) {
 					try {
