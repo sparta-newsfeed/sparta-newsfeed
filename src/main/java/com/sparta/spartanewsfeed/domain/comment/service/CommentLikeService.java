@@ -30,7 +30,6 @@ public class CommentLikeService {
 
 		Comment comment = commentRepository.findById(commentId)
 			.orElseThrow(() -> new NotFoundEntityException(NOT_FOUND_COMMENT));
-//			.orElseThrow(() -> new IllegalArgumentException("Comment id " + commentId + " not found"));
 
 		Member member = findByEmail(authorization);
 
@@ -53,6 +52,5 @@ public class CommentLikeService {
 
 		return memberRepository.findByEmail(claims.getSubject())
 			.orElseThrow(() -> new NotFoundEntityException(NOT_FOUND_MEMBER));
-//			.orElseThrow(() -> new IllegalArgumentException("User not found"));
 	}
 }

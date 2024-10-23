@@ -15,6 +15,8 @@ public enum ExceptionCode {
 
     DUPLICATE_EMAIL(HttpStatus.BAD_REQUEST, "Email address already in used"),
 
+    EMAIL_HAS_HISTORY_OF_WITHDRAWAL(HttpStatus.BAD_REQUEST, "Email has history of withdrawal"),
+
     NOT_MATCH_PASSWORD(HttpStatus.UNAUTHORIZED, "Not match password"),
 
     NOT_MATCH_CHECK_PASSWORD(HttpStatus.BAD_REQUEST, "Not match origin password and checking password"),
