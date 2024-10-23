@@ -16,6 +16,7 @@ import com.sparta.spartanewsfeed.domain.jwt.config.PasswordEncoder;
 import com.sparta.spartanewsfeed.domain.member.Friend;
 import com.sparta.spartanewsfeed.domain.member.FriendStatus;
 import com.sparta.spartanewsfeed.domain.member.Member;
+import com.sparta.spartanewsfeed.domain.member.WithdrawnMember;
 import com.sparta.spartanewsfeed.domain.member.dto.OtherMemberProfile;
 import com.sparta.spartanewsfeed.domain.member.dto.RequestVerifyIdentity;
 import com.sparta.spartanewsfeed.domain.member.dto.ResponseMember;
@@ -24,6 +25,7 @@ import com.sparta.spartanewsfeed.domain.member.dto.UpdatePassword;
 import com.sparta.spartanewsfeed.domain.member.dto.VerifyIdentityResult;
 import com.sparta.spartanewsfeed.domain.member.repository.FriendRepository;
 import com.sparta.spartanewsfeed.domain.member.repository.MemberRepository;
+import com.sparta.spartanewsfeed.domain.member.repository.WithdrawnMemberRepository;
 import com.sparta.spartanewsfeed.exception.customException.NotFoundEntityException;
 import com.sparta.spartanewsfeed.exception.customException.NotMatchPasswordException;
 
@@ -34,8 +36,8 @@ import lombok.RequiredArgsConstructor;
 public class MemberService {
 	private final MemberRepository memberRepository;
 	private final FriendRepository friendRepository;
-	private final FriendService friendService;
 	private final PasswordEncoder passwordEncoder;
+	private final WithdrawnMemberRepository withdrawnMemberRepository;
 
 	@Transactional(readOnly = true)
 	public OtherMemberProfile findById(Member member, Long id) {
@@ -86,10 +88,6 @@ public class MemberService {
 		memberRepository.save(member);
 	}
 
-	public void delete(Member member) {
-		memberRepository.delete(member);
-	}
-
 	public PagedModel<ResponseMember> retrieveFilteredFriendMembers(
 		String username,
 		Member loginMember,
@@ -125,5 +123,12 @@ public class MemberService {
 			.map(friend -> friend.findFriend(loginMember))
 			.flatMap(Optional::stream)
 			.toList();
+	}
+
+	public void delete(Member member) {
+		WithdrawnMember withdrawnMember = new WithdrawnMember(member.getEmail());
+		withdrawnMemberRepository.save(withdrawnMember);
+
+		memberRepository.delete(member);
 	}
 }
