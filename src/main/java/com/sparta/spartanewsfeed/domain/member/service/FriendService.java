@@ -1,12 +1,13 @@
 package com.sparta.spartanewsfeed.domain.member.service;
 
-import static com.sparta.spartanewsfeed.domain.member.FriendStatus.*;
-
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-
+import com.sparta.spartanewsfeed.domain.member.Friend;
+import com.sparta.spartanewsfeed.domain.member.Member;
+import com.sparta.spartanewsfeed.domain.member.dto.FriendResponseDto;
+import com.sparta.spartanewsfeed.domain.member.repository.FriendRepository;
+import com.sparta.spartanewsfeed.domain.member.repository.MemberRepository;
+import com.sparta.spartanewsfeed.exception.customException.MakeFriendException;
+import com.sparta.spartanewsfeed.exception.customException.NotFoundEntityException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -14,13 +15,14 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.sparta.spartanewsfeed.domain.member.Friend;
-import com.sparta.spartanewsfeed.domain.member.Member;
-import com.sparta.spartanewsfeed.domain.member.dto.FriendResponseDto;
-import com.sparta.spartanewsfeed.domain.member.repository.FriendRepository;
-import com.sparta.spartanewsfeed.domain.member.repository.MemberRepository;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
-import lombok.extern.slf4j.Slf4j;
+import static com.sparta.spartanewsfeed.domain.member.FriendStatus.ACCEPT;
+import static com.sparta.spartanewsfeed.domain.member.FriendStatus.PENDING;
+import static com.sparta.spartanewsfeed.exception.enums.ExceptionCode.*;
 
 @Service
 @Slf4j(topic = "FriendService")
@@ -45,14 +47,14 @@ public class FriendService {
 
 	public void addFriend(Member member, Long friendId) {
 		Member friend = memberRepository.findById(friendId)
-			.orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다."));
+			.orElseThrow(() -> new NotFoundEntityException(NOT_FOUND_MEMBER));
 
 		Friend friend1 = findByRequestMemberAndResponseMember(member, friend);
 		if (member.isUserIdEqual(friendId)) {
-			throw new IllegalArgumentException("본인과 친구가 될 수 없습니다.");
+			throw new MakeFriendException(CAN_NOT_FRIEND_WITH_YOURSELF);
 		}
 		if (friend1 != null) {
-			throw new IllegalArgumentException("이미 친구입니다.");
+			throw new MakeFriendException(ALREADY_FRIEND);
 		}
 		friend1 = Friend.builder().requestMember(member).responseMember(friend).status(PENDING)
 			.requestedAt(LocalDateTime.now()).build();
@@ -62,7 +64,7 @@ public class FriendService {
 	@Transactional
 	public void acceptFriend(Member member, Long friendId) {
 		Member friend = memberRepository.findById(friendId)
-			.orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다."));
+			.orElseThrow(() -> new NotFoundEntityException(NOT_FOUND_MEMBER));
 
 		Friend friend1 = friendRepository.findByRequestMemberAndResponseMember(friend, member);
 		friend1.update(ACCEPT);
@@ -70,7 +72,7 @@ public class FriendService {
 
 	public void deleteFriend(Member member, Long friendId) {
 		Member friend = memberRepository.findById(friendId)
-			.orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다."));
+			.orElseThrow(() -> new NotFoundEntityException(NOT_FOUND_MEMBER));
 
 		Friend friend1 = findByRequestMemberAndResponseMember(member, friend);
 

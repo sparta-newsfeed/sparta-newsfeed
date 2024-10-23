@@ -1,23 +1,25 @@
 package com.sparta.spartanewsfeed.domain.member.service;
 
-import static com.sparta.spartanewsfeed.domain.jwt.jwt.JwtUtil.*;
-
-import java.util.Optional;
-
-import org.springframework.stereotype.Service;
-
-import com.sparta.spartanewsfeed.domain.member.Member;
 import com.sparta.spartanewsfeed.domain.jwt.config.PasswordEncoder;
+import com.sparta.spartanewsfeed.domain.jwt.jwt.JwtUtil;
+import com.sparta.spartanewsfeed.domain.member.Member;
 import com.sparta.spartanewsfeed.domain.member.UserRole;
 import com.sparta.spartanewsfeed.domain.member.dto.LoginRequestDto;
 import com.sparta.spartanewsfeed.domain.member.dto.SignupRequestDto;
-import com.sparta.spartanewsfeed.domain.jwt.jwt.JwtUtil;
 import com.sparta.spartanewsfeed.domain.member.repository.MemberRepository;
-
+import com.sparta.spartanewsfeed.exception.customException.DuplicateEmailException;
+import com.sparta.spartanewsfeed.exception.customException.NotFoundEntityException;
+import com.sparta.spartanewsfeed.exception.customException.NotMatchPasswordException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+
+import java.util.Optional;
+
+import static com.sparta.spartanewsfeed.domain.jwt.jwt.JwtUtil.AUTHORIZATION_HEADER;
+import static com.sparta.spartanewsfeed.exception.enums.ExceptionCode.*;
 
 @Service
 @RequiredArgsConstructor
@@ -36,7 +38,7 @@ public class AuthService {
 		// email 중복확인
 		Optional<Member> checkEmail = memberRepository.findByEmail(email);
 		if (checkEmail.isPresent()) {
-			throw new IllegalArgumentException("중복된 Email 입니다.");
+			throw new DuplicateEmailException(DUPLICATE_EMAIL);
 		}
 		//비밀번호 체크는 SignRequestDto에서 설정
 
@@ -53,11 +55,11 @@ public class AuthService {
 
 		//사용자 확인
 		Member member = memberRepository.findByEmail(email)
-			.orElseThrow(() -> new IllegalArgumentException("등록된 사용자가 없습니다"));
+			.orElseThrow(() -> new NotFoundEntityException(NOT_FOUND_MEMBER));
 
 		//비밀번호 확인
 		if(!passwordEncoder.matches(password, member.getPassword())) {
-			throw new IllegalArgumentException("비밀번호가 일치하지 않습니다");
+			throw new NotMatchPasswordException(NOT_MATCH_PASSWORD);
 		}
 
 		// JWT 생성 및 쿠기 저장 후 Response객체에 추가

@@ -2,6 +2,8 @@ package com.sparta.spartanewsfeed.domain.jwt.filter;
 
 import java.io.IOException;
 
+import com.sparta.spartanewsfeed.exception.customException.NotFoundEntityException;
+import com.sparta.spartanewsfeed.exception.enums.ExceptionCode;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
@@ -19,9 +21,11 @@ import jakarta.servlet.ServletResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 
+import static com.sparta.spartanewsfeed.exception.enums.ExceptionCode.*;
+
 @Slf4j(topic = "AuthFilter")
 @Component
-@Order(2)
+@Order(3)
 public class AuthFilter implements Filter {
 
 	private final MemberRepository memberRepository;
@@ -54,21 +58,16 @@ public class AuthFilter implements Filter {
 				String token = jwtUtil.substringToken(tokenValue);
 
 				// 토큰 검증
-				if (!jwtUtil.validateToken(token)) {
-					throw new IllegalArgumentException("Token Error");
-				}
+				jwtUtil.validateToken(token);
 
 				// 토큰에서 사용자 정보 가져오기
 				Claims info = jwtUtil.getUserInfoFromToken(token);
 
-				Member member = memberRepository.findByEmail(info.getSubject()).orElseThrow(() ->
-					new NullPointerException("Not Found User")
-				);
+				Member member = memberRepository.findByEmail(info.getSubject())
+						.orElseThrow(() -> new NotFoundEntityException(NOT_FOUND_MEMBER));
 
 				request.setAttribute("member", member);
 				chain.doFilter(request, response); // 다음 Filter 로 이동
-			} else {
-				throw new IllegalArgumentException("Not Found Token");
 			}
 		}
 	}
