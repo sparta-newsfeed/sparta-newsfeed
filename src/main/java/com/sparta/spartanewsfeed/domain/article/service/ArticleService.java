@@ -1,15 +1,15 @@
 package com.sparta.spartanewsfeed.domain.article.service;
 
+import static com.sparta.spartanewsfeed.exception.enums.ExceptionCode.*;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.server.ResponseStatusException;
 
 import com.sparta.spartanewsfeed.domain.article.controller.dto.ArticleResponseDto;
 import com.sparta.spartanewsfeed.domain.article.controller.dto.ArticlesResponseDto;
@@ -21,16 +21,9 @@ import com.sparta.spartanewsfeed.domain.member.Member;
 import com.sparta.spartanewsfeed.domain.member.service.FriendService;
 import com.sparta.spartanewsfeed.exception.customException.HasNotPermissionException;
 import com.sparta.spartanewsfeed.exception.customException.NotFoundEntityException;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Service;
-
-import java.util.List;
-
-import static com.sparta.spartanewsfeed.exception.enums.ExceptionCode.HAS_NOT_PERMISSION;
-import static com.sparta.spartanewsfeed.exception.enums.ExceptionCode.NOT_FOUND_ARTICLE;
 
 @Slf4j(topic = "ArticleService")
 @Service
@@ -40,6 +33,7 @@ public class ArticleService {
 	private final FriendService friendService;
 	private final ArticleRepository articleRepository;
 	private final ArticleLikeRepository articleLikeRepository;
+	private final ArticleImageService articleImageService;
 
 	public Page<ArticlesResponseDto> retrieveArticles(Pageable pageable, Member member) {
 		List<Member> friends = friendService.getRelatedFriends(member);
