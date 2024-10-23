@@ -1,5 +1,12 @@
 package com.sparta.spartanewsfeed.domain.member.service;
 
+import static com.sparta.spartanewsfeed.domain.jwt.jwt.JwtUtil.*;
+import static com.sparta.spartanewsfeed.exception.enums.ExceptionCode.*;
+
+import java.util.Optional;
+
+import org.springframework.stereotype.Service;
+
 import com.sparta.spartanewsfeed.domain.jwt.config.PasswordEncoder;
 import com.sparta.spartanewsfeed.domain.jwt.jwt.JwtUtil;
 import com.sparta.spartanewsfeed.domain.member.Member;
@@ -9,20 +16,14 @@ import com.sparta.spartanewsfeed.domain.member.dto.LoginRequestDto;
 import com.sparta.spartanewsfeed.domain.member.dto.SignupRequestDto;
 import com.sparta.spartanewsfeed.domain.member.repository.MemberRepository;
 import com.sparta.spartanewsfeed.domain.member.repository.WithdrawnMemberRepository;
-
 import com.sparta.spartanewsfeed.exception.customException.DuplicateEmailException;
 import com.sparta.spartanewsfeed.exception.customException.NotFoundEntityException;
 import com.sparta.spartanewsfeed.exception.customException.NotMatchPasswordException;
+
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-
-import java.util.Optional;
-
-import static com.sparta.spartanewsfeed.domain.jwt.jwt.JwtUtil.AUTHORIZATION_HEADER;
-import static com.sparta.spartanewsfeed.exception.enums.ExceptionCode.*;
 
 @Service
 @RequiredArgsConstructor
@@ -73,13 +74,13 @@ public class AuthService {
 			.orElseThrow(() -> new NotFoundEntityException(NOT_FOUND_MEMBER));
 
 		//비밀번호 확인
-		if(!passwordEncoder.matches(password, member.getPassword())) {
+		if (!passwordEncoder.matches(password, member.getPassword())) {
 			throw new NotMatchPasswordException(NOT_MATCH_PASSWORD);
 		}
 
 		// JWT 생성 및 쿠기 저장 후 Response객체에 추가
 		String token = jwtUtil.createToken(member.getEmail(), member.getRole());
-		jwtUtil.addJwtToCookie(token ,res);
+		jwtUtil.addJwtToCookie(token, res);
 	}
 
 	public void logout(HttpServletResponse res) {
