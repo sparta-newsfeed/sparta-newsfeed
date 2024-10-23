@@ -19,6 +19,7 @@ import com.sparta.spartanewsfeed.domain.comment.controller.dto.CommentResponseDt
 import com.sparta.spartanewsfeed.domain.comment.service.CommentLikeService;
 import com.sparta.spartanewsfeed.domain.comment.service.CommentService;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -31,7 +32,7 @@ public class CommentController {
 
 	@PostMapping("/articles/{articleId}/comment")
 	public ResponseEntity<CommentResponseDto> createComment(@PathVariable Long articleId,
-		@RequestBody CommentRequestDto requestDto,
+		@Valid @RequestBody CommentRequestDto requestDto,
 		@CookieValue(value = "Authorization") String authorization) {
 		String body = requestDto.getBody();
 		return ResponseEntity.status(HttpStatus.CREATED)
@@ -50,7 +51,7 @@ public class CommentController {
 
 	@PutMapping("/comment/{commentId}")
 	public ResponseEntity<CommentResponseDto> updateComment(@PathVariable Long commentId,
-		@RequestBody CommentRequestDto requestDto,
+		@Valid @RequestBody CommentRequestDto requestDto,
 		@CookieValue(value = "Authorization") String authorization) {
 		String body = requestDto.getBody();
 		return ResponseEntity.status(HttpStatus.OK).body(commentService.updateComment(commentId, body, authorization));
