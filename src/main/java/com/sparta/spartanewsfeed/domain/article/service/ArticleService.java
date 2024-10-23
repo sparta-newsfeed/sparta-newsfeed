@@ -36,6 +36,7 @@ public class ArticleService {
 	private final ArticleLikeRepository articleLikeRepository;
 	private final ArticleImageService articleImageService;
 
+	@Transactional
 	public Page<ArticlesResponseDto> retrieveArticles(Pageable pageable, Member member) {
 		List<Member> friends = friendService.getRelatedFriends(member);
 		// friends.add(member);
@@ -43,6 +44,7 @@ public class ArticleService {
 			.map(ArticlesResponseDto::from);
 	}
 
+	@Transactional
 	public ArticleResponseDto retrieveArticle(Long id, Member member) {
 		return articleRepository.findById(id)
 			.map((article -> {

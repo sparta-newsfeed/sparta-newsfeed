@@ -44,9 +44,10 @@ public class CommentController {
 		@PathVariable Long articleId,
 		@RequestParam(required = false, defaultValue = "0") int page,
 		@RequestParam(required = false, defaultValue = "10") int size,
+		@RequestParam(required = false, defaultValue = "latest") String sortBy,
 		@CookieValue(value = "Authorization", required = false) String authorization) {
 		return ResponseEntity.status(HttpStatus.OK)
-			.body(new PagedModel<>(commentService.getComments(articleId, page, size, authorization)));
+			.body(new PagedModel<>(commentService.getComments(articleId, page, size, sortBy, authorization)));
 	}
 
 	@PutMapping("/comment/{commentId}")
