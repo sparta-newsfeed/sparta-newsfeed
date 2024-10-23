@@ -1,11 +1,14 @@
 package com.sparta.spartanewsfeed.domain.member.service;
 
 import com.sparta.spartanewsfeed.domain.member.Friend;
+import com.sparta.spartanewsfeed.domain.member.WithdrawnMember;
 import com.sparta.spartanewsfeed.domain.member.repository.FriendRepository;
 import com.sparta.spartanewsfeed.domain.jwt.config.PasswordEncoder;
 import com.sparta.spartanewsfeed.domain.member.Member;
 import com.sparta.spartanewsfeed.domain.member.dto.*;
 import com.sparta.spartanewsfeed.domain.member.repository.MemberRepository;
+import com.sparta.spartanewsfeed.domain.member.repository.WithdrawnMemberRepository;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,6 +21,7 @@ public class MemberService {
     private final MemberRepository memberRepository;
     private final FriendRepository friendRepository;
     private final PasswordEncoder passwordEncoder;
+    private final WithdrawnMemberRepository withdrawnMemberRepository;
 
     @Transactional(readOnly = true)
     public OtherMemberProfile findById(Member member, Long id) {
@@ -65,6 +69,9 @@ public class MemberService {
     }
 
     public void delete(Member member) {
+        WithdrawnMember withdrawnMember = new WithdrawnMember(member.getEmail());
+        withdrawnMemberRepository.save(withdrawnMember);
+
         memberRepository.delete(member);
     }
 }

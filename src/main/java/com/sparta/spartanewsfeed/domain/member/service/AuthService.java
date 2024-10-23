@@ -9,10 +9,12 @@ import org.springframework.stereotype.Service;
 import com.sparta.spartanewsfeed.domain.member.Member;
 import com.sparta.spartanewsfeed.domain.jwt.config.PasswordEncoder;
 import com.sparta.spartanewsfeed.domain.member.UserRole;
+import com.sparta.spartanewsfeed.domain.member.WithdrawnMember;
 import com.sparta.spartanewsfeed.domain.member.dto.LoginRequestDto;
 import com.sparta.spartanewsfeed.domain.member.dto.SignupRequestDto;
 import com.sparta.spartanewsfeed.domain.jwt.jwt.JwtUtil;
 import com.sparta.spartanewsfeed.domain.member.repository.MemberRepository;
+import com.sparta.spartanewsfeed.domain.member.repository.WithdrawnMemberRepository;
 
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
@@ -24,6 +26,7 @@ import lombok.RequiredArgsConstructor;
 public class AuthService {
 	private final MemberRepository memberRepository;
 	private final PasswordEncoder passwordEncoder;
+	private final WithdrawnMemberRepository withdrawnMemberRepository;
 	private final JwtUtil jwtUtil;
 
 	public Member signup(@Valid SignupRequestDto signupRequestDto) {
@@ -38,6 +41,13 @@ public class AuthService {
 		if (checkEmail.isPresent()) {
 			throw new IllegalArgumentException("중복된 Email 입니다.");
 		}
+
+		// 탈퇴한 이메일 여부 확인
+		Optional<WithdrawnMember> checkWithdrawnEmail = withdrawnMemberRepository.findByEmail(email);
+		if (checkWithdrawnEmail.isPresent()) {
+			throw new IllegalArgumentException("탈퇴 이력이 있는 Email 입니다");
+		}
+
 		//비밀번호 체크는 SignRequestDto에서 설정
 
 		// 사용자 생성 및 저장
