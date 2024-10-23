@@ -3,6 +3,8 @@ package com.sparta.spartanewsfeed.domain.member;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 import org.springframework.data.annotation.CreatedDate;
 
 import jakarta.persistence.Column;
@@ -36,10 +38,12 @@ public class Friend {
 	private Long id;
 
 	@ManyToOne(fetch = FetchType.LAZY)
+	@OnDelete(action = OnDeleteAction.CASCADE)
 	@JoinColumn(name = "request_id")
 	private Member requestMember;
 
 	@ManyToOne(fetch = FetchType.LAZY)
+	@OnDelete(action = OnDeleteAction.CASCADE)
 	@JoinColumn(name = "response_id")
 	private Member responseMember;
 

@@ -26,8 +26,6 @@ import static com.sparta.spartanewsfeed.exception.enums.ExceptionCode.*;
 
 @Component
 public class JwtUtil {
-
-
     // Header KEY 값
     public static final String AUTHORIZATION_HEADER = "Authorization";
     // 사용자 권한 값의 KEY
@@ -76,11 +74,12 @@ public class JwtUtil {
 
             Cookie cookie = new Cookie(AUTHORIZATION_HEADER, token); // Name-Value
             cookie.setPath("/");
-
-            // Response 객체에 Cookie 추가
+            cookie.setHttpOnly(true);
+            cookie.setSecure(true);
+            cookie.setAttribute("SameSite", "None");
             res.addCookie(cookie);
         } catch (UnsupportedEncodingException e) {
-            logger.error(e.getMessage());
+            throw new NotValidCookieException(NOT_SUPPORT_ENCODING_COOKIE);
         }
     }
 
@@ -89,8 +88,7 @@ public class JwtUtil {
         if (StringUtils.hasText(tokenValue) && tokenValue.startsWith(BEARER_PREFIX)) {
             return tokenValue.substring(7);//"Bearer " 7글자 자르고
         }
-        logger.error("Not Found Token");
-        throw new NullPointerException("Not Found Token");
+        throw new NotValidTokenException(HAS_NOT_TOKEN);
     }
 
     //JWT 검증

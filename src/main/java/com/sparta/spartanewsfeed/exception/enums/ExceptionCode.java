@@ -23,6 +23,8 @@ public enum ExceptionCode {
 
     HAS_NOT_COOKIE(HttpStatus.BAD_REQUEST, "Request has not cookie"),
 
+    NOT_SUPPORT_ENCODING_COOKIE(HttpStatus.BAD_REQUEST, "Not support encoding cookie"),
+
     HAS_NOT_TOKEN(HttpStatus.BAD_REQUEST, "Request has not token"),
 
     NOT_VALID_TOKEN(HttpStatus.UNAUTHORIZED, "Not valid token"),

@@ -21,7 +21,6 @@ public class ArticleLikeService {
 	public void toggleLike(Long articleId, Member member) {
 		Article article = articleRepository.findById(articleId)
 			.orElseThrow(() -> new NotFoundEntityException(NOT_FOUND_ARTICLE));
-//			.orElseThrow(() -> new IllegalArgumentException("존재하지 않는 게시물 입니다."));
 
 		articleLikeRepository.findArticleLikeByArticleAndMember(article, member)
 			.ifPresentOrElse(

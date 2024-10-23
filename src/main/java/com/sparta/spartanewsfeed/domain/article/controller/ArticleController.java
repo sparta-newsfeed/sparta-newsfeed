@@ -2,6 +2,7 @@ package com.sparta.spartanewsfeed.domain.article.controller;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.data.web.PagedModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -37,7 +38,7 @@ public class ArticleController {
 	@GetMapping
 	public ResponseEntity<PagedModel<ArticlesResponseDto>> retrieveArticles(
 		@RequestAttribute("member") Member member,
-		Pageable pageable
+		@PageableDefault Pageable pageable
 	) {
 		Page<ArticlesResponseDto> articles = articleService.retrieveArticles(pageable, member);
 		return ResponseEntity
@@ -46,10 +47,13 @@ public class ArticleController {
 	}
 
 	@GetMapping("/{id}")
-	public ResponseEntity<ArticleResponseDto> retrieveArticle(@PathVariable Long id) {
+	public ResponseEntity<ArticleResponseDto> retrieveArticle(
+		@PathVariable Long id,
+		@RequestAttribute("member") Member member
+	) {
 		return ResponseEntity
 			.status(HttpStatus.OK)
-			.body(articleService.retrieveArticle(id));
+			.body(articleService.retrieveArticle(id, member));
 	}
 
 	@PostMapping

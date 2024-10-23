@@ -13,9 +13,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -33,16 +31,19 @@ public class ArticleService {
 
 	public Page<ArticlesResponseDto> retrieveArticles(Pageable pageable, Member member) {
 		List<Member> friends = friendService.getRelatedFriends(member);
+		// friends.add(member);
 		return articleRepository.findAllByAuthorIn(friends, pageable)
 			.map(ArticlesResponseDto::from);
 	}
 
-	public ArticleResponseDto retrieveArticle(Long id) {
-		boolean isLike = articleLikeRepository.existsById(id);
+	public ArticleResponseDto retrieveArticle(Long id, Member member) {
 		return articleRepository.findById(id)
-			.map((article -> ArticleResponseDto.of(article, isLike)))
+			.map((article -> {
+				boolean isLike = articleLikeRepository.findArticleLikeByArticleAndMember(article, member)
+					.isPresent();
+				return ArticleResponseDto.of(article, isLike);
+			}))
 			.orElseThrow(() -> new NotFoundEntityException(NOT_FOUND_ARTICLE));
-//			.orElseThrow(() -> new IllegalArgumentException("해당 게시물은 존재하지 않습니다."));
 	}
 
 	public ArticleResponseDto createArticle(String title, String body, Member member) {
@@ -60,7 +61,6 @@ public class ArticleService {
 	public ArticleResponseDto updateArticle(Long id, String title, String body, Member member) {
 		Article article = articleRepository.findById(id)
 			.orElseThrow(() -> new NotFoundEntityException(NOT_FOUND_ARTICLE));
-//			.orElseThrow(() -> new IllegalArgumentException("존재하지 않는 게시물 입니다."));
 		verifyAuthorOrAdmin(article, member);
 		article.update(title, body);
 		Article savedArticle = articleRepository.save(article);
@@ -70,7 +70,6 @@ public class ArticleService {
 	public ArticleResponseDto deleteArticle(Long id, Member member) {
 		Article article = articleRepository.findById(id)
 			.orElseThrow(() -> new NotFoundEntityException(NOT_FOUND_ARTICLE));
-//			.orElseThrow(() -> new IllegalArgumentException("존재하지 않는 게시물 입니다."));
 		verifyAuthorOrAdmin(article, member);
 		articleRepository.delete(article);
 		return ArticleResponseDto.from(article);
@@ -79,7 +78,6 @@ public class ArticleService {
 	private void verifyAuthorOrAdmin(Article article, Member member) {
 		if (!(article.isAuthor(member.getId()) || member.isAdmin())) {
 			throw new HasNotPermissionException(HAS_NOT_PERMISSION);
-//			throw new ResponseStatusException(HttpStatus.FORBIDDEN, "권한이 없습니다.");
 		}
 	}
 }
