@@ -19,6 +19,14 @@ import static com.sparta.spartanewsfeed.exception.enums.ExceptionCode.INVALID_RE
 @Slf4j(topic = "ControllerException")
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+    @ExceptionHandler(MakeFriendException.class)
+    public ResponseEntity<Object> handleMakeFriendException(MakeFriendException e) {
+        ExceptionCode exceptionCode = e.getExceptionCode();
+        log.error("{}: {}", exceptionCode, exceptionCode.getMessage());
+        return ResponseEntity.status(exceptionCode.getHttpStatus())
+                .body(makeResponseExceptionCode(exceptionCode));
+    }
+
     @ExceptionHandler(NotValidCookieException.class)
     public ResponseEntity<Object> handleNotValidCookieException(NotValidCookieException e) {
         ExceptionCode exceptionCode = e.getExceptionCode();

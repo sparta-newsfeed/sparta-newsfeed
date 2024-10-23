@@ -13,8 +13,6 @@ public enum ExceptionCode {
 
     NOT_FOUND_ARTICLE(HttpStatus.NOT_FOUND, "Article not found"),
 
-    NOT_FOUND_FRIEND(HttpStatus.NOT_FOUND, "Friend not found"),
-
     DUPLICATE_EMAIL(HttpStatus.BAD_REQUEST, "Email address already in used"),
 
     NOT_MATCH_PASSWORD(HttpStatus.UNAUTHORIZED, "Not match password"),
@@ -34,6 +32,10 @@ public enum ExceptionCode {
     NOT_SUPPORT_TOKEN(HttpStatus.UNAUTHORIZED, "Is not support token"),
 
     HAS_NOT_PERMISSION(HttpStatus.FORBIDDEN, "You do not have permission"),
+
+    CAN_NOT_FRIEND_WITH_YOURSELF(HttpStatus.BAD_REQUEST, "Can not friend with yourself"),
+
+    ALREADY_FRIEND(HttpStatus.BAD_REQUEST, "Already friend"),
     ;
 
     private final HttpStatus httpStatus;
