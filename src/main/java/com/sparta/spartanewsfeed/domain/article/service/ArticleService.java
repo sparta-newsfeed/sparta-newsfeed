@@ -35,14 +35,18 @@ public class ArticleService {
 
 	public Page<ArticlesResponseDto> retrieveArticles(Pageable pageable, Member member) {
 		List<Member> friends = friendService.getRelatedFriends(member);
+		// friends.add(member);
 		return articleRepository.findAllByAuthorIn(friends, pageable)
 			.map(ArticlesResponseDto::from);
 	}
 
-	public ArticleResponseDto retrieveArticle(Long id) {
-		boolean isLike = articleLikeRepository.existsById(id);
+	public ArticleResponseDto retrieveArticle(Long id, Member member) {
 		return articleRepository.findById(id)
-			.map((article -> ArticleResponseDto.of(article, isLike)))
+			.map((article -> {
+				boolean isLike = articleLikeRepository.findArticleLikeByArticleAndMember(article, member)
+					.isPresent();
+				return ArticleResponseDto.of(article, isLike);
+			}))
 			.orElseThrow(() -> new IllegalArgumentException("해당 게시물은 존재하지 않습니다."));
 	}
 

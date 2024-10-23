@@ -1,6 +1,7 @@
 package com.sparta.spartanewsfeed.domain.member.controller;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -41,10 +42,11 @@ public class AuthController {
 
 	@PostMapping("/login")
 	@ResponseStatus(HttpStatus.CREATED) //201
-	public String login(@RequestBody LoginRequestDto requestDto, HttpServletResponse res) {
+	public ResponseEntity<Void> login(@RequestBody LoginRequestDto requestDto, HttpServletResponse res) {
 		authService.login(requestDto, res);
-		System.out.println("로그인");
-		return "로그인";
+		return ResponseEntity
+			.status(HttpStatus.OK)
+			.build();
 	}
 
 	@PostMapping("/logout")
