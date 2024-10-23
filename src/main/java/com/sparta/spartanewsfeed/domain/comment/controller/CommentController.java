@@ -33,7 +33,8 @@ public class CommentController {
 	@PostMapping("/articles/{articleId}/comment")
 	public ResponseEntity<CommentResponseDto> createComment(@PathVariable Long articleId,
 		@Valid @RequestBody CommentRequestDto requestDto,
-		@CookieValue(value = "Authorization") String authorization) {
+		@CookieValue(value = "Authorization", required = false) String authorization) {
+		//@RequestHeader(value = "Authorization") String authorization) { // 쿠키가 아닌 헤더에 담는 경우 (모바일에서는 이걸 더 선호함)
 		String body = requestDto.getBody();
 		return ResponseEntity.status(HttpStatus.CREATED)
 			.body(commentService.createComment(articleId, body, authorization));
