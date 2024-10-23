@@ -1,8 +1,5 @@
 package com.sparta.spartanewsfeed.domain.comment.service;
 
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.sparta.spartanewsfeed.domain.comment.entity.Comment;
 import com.sparta.spartanewsfeed.domain.comment.entity.CommentLike;
 import com.sparta.spartanewsfeed.domain.comment.repository.CommentLikeRepository;
@@ -10,9 +7,14 @@ import com.sparta.spartanewsfeed.domain.comment.repository.CommentRepository;
 import com.sparta.spartanewsfeed.domain.jwt.jwt.JwtUtil;
 import com.sparta.spartanewsfeed.domain.member.Member;
 import com.sparta.spartanewsfeed.domain.member.repository.MemberRepository;
-
+import com.sparta.spartanewsfeed.exception.customException.NotFoundEntityException;
 import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import static com.sparta.spartanewsfeed.exception.enums.ExceptionCode.NOT_FOUND_COMMENT;
+import static com.sparta.spartanewsfeed.exception.enums.ExceptionCode.NOT_FOUND_MEMBER;
 
 @Service
 @RequiredArgsConstructor
@@ -27,7 +29,7 @@ public class CommentLikeService {
 	public void likeComment(Long commentId, String authorization) {
 
 		Comment comment = commentRepository.findById(commentId)
-			.orElseThrow(() -> new IllegalArgumentException("Comment id " + commentId + " not found"));
+			.orElseThrow(() -> new NotFoundEntityException(NOT_FOUND_COMMENT));
 
 		Member member = findByEmail(authorization);
 
@@ -49,6 +51,6 @@ public class CommentLikeService {
 		Claims claims = jwtUtil.getUserInfoFromToken(authorization);
 
 		return memberRepository.findByEmail(claims.getSubject())
-			.orElseThrow(() -> new IllegalArgumentException("User not found"));
+			.orElseThrow(() -> new NotFoundEntityException(NOT_FOUND_MEMBER));
 	}
 }

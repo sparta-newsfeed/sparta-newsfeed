@@ -51,6 +51,9 @@ public class Article extends Timestamp {
 	@OneToMany(mappedBy = "article", cascade = CascadeType.REMOVE)
 	private List<Comment> comments = new ArrayList<>();
 
+	@OneToMany(mappedBy = "article", cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, orphanRemoval = true)
+	private List<ArticleImage> articleImages = new ArrayList<>();
+
 	public void update(String title, String body) {
 		if (title != null) {
 			this.title = title;

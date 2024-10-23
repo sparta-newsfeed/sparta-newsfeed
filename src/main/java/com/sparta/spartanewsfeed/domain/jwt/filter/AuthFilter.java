@@ -1,14 +1,17 @@
 package com.sparta.spartanewsfeed.domain.jwt.filter;
 
+import static com.sparta.spartanewsfeed.exception.enums.ExceptionCode.*;
+
 import java.io.IOException;
 
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
-import com.sparta.spartanewsfeed.domain.member.Member;
 import com.sparta.spartanewsfeed.domain.jwt.jwt.JwtUtil;
+import com.sparta.spartanewsfeed.domain.member.Member;
 import com.sparta.spartanewsfeed.domain.member.repository.MemberRepository;
+import com.sparta.spartanewsfeed.exception.customException.NotFoundEntityException;
 
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.Filter;
@@ -21,7 +24,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j(topic = "AuthFilter")
 @Component
-@Order(2)
+@Order(3)
 public class AuthFilter implements Filter {
 
 	private final MemberRepository memberRepository;
@@ -36,11 +39,12 @@ public class AuthFilter implements Filter {
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws
 		IOException,
 		ServletException {
-		HttpServletRequest httpServletRequest = (HttpServletRequest) request;
+		HttpServletRequest httpServletRequest = (HttpServletRequest)request;
 		String url = httpServletRequest.getRequestURI();
 
 		if (StringUtils.hasText(url) &&
-			(url.startsWith("/api/auth") || url.startsWith("/css") || url.startsWith("/js"))
+			(url.startsWith("/api/auth") || url.startsWith("/css") || url.startsWith("/js") || url.startsWith(
+				"/uploads"))
 		) {
 			// 회원가입, 로그인 관련 API 는 인증 필요없이 요청 진행
 			chain.doFilter(request, response); // 다음 Filter 로 이동
@@ -54,21 +58,16 @@ public class AuthFilter implements Filter {
 				String token = jwtUtil.substringToken(tokenValue);
 
 				// 토큰 검증
-				if (!jwtUtil.validateToken(token)) {
-					throw new IllegalArgumentException("Token Error");
-				}
+				jwtUtil.validateToken(token);
 
 				// 토큰에서 사용자 정보 가져오기
 				Claims info = jwtUtil.getUserInfoFromToken(token);
 
-				Member member = memberRepository.findByEmail(info.getSubject()).orElseThrow(() ->
-					new NullPointerException("Not Found User")
-				);
+				Member member = memberRepository.findByEmail(info.getSubject())
+					.orElseThrow(() -> new NotFoundEntityException(NOT_FOUND_MEMBER));
 
 				request.setAttribute("member", member);
 				chain.doFilter(request, response); // 다음 Filter 로 이동
-			} else {
-				throw new IllegalArgumentException("Not Found Token");
 			}
 		}
 	}
