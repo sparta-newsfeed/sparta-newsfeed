@@ -7,6 +7,9 @@ import com.sparta.spartanewsfeed.domain.jwt.config.PasswordEncoder;
 import com.sparta.spartanewsfeed.domain.member.Member;
 import com.sparta.spartanewsfeed.domain.member.dto.*;
 import com.sparta.spartanewsfeed.domain.member.repository.MemberRepository;
+import com.sparta.spartanewsfeed.exception.customException.NotFoundEntityException;
+import com.sparta.spartanewsfeed.exception.customException.NotMatchPasswordException;
+import com.sparta.spartanewsfeed.exception.enums.ExceptionCode;
 import com.sparta.spartanewsfeed.domain.member.repository.WithdrawnMemberRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -14,6 +17,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+
+import static com.sparta.spartanewsfeed.exception.enums.ExceptionCode.*;
 
 @Service
 @RequiredArgsConstructor
@@ -26,7 +31,7 @@ public class MemberService {
     @Transactional(readOnly = true)
     public OtherMemberProfile findById(Member member, Long id) {
         Member foundMember = memberRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("해당 ID 를 가진 회원을 찾을 수 없습니다."));
+                .orElseThrow(() -> new NotFoundEntityException(NOT_FOUND_MEMBER));
 
         List<Friend> foundFriend = friendRepository.findAll(member.getId(), id);
         boolean isFriend = !foundFriend.isEmpty();
@@ -60,7 +65,11 @@ public class MemberService {
     @Transactional
     public void updatePassword(Member member, UpdatePassword request) {
         if (!request.getNewPassword().equals(request.getConfirmNewPassword())) {
-            throw new IllegalArgumentException("새로운 비밀번호가 일치하지 않습니다.");
+            throw new NotMatchPasswordException(NOT_MATCH_CHECK_PASSWORD);
+        }
+
+        if (passwordEncoder.matches(request.getNewPassword(), member.getPassword())) {
+            throw new NotMatchPasswordException(CURRENT_PASSWORD_AND_CHANGE_PASSWORD_IS_SAME);
         }
 
         String encodedPassword = passwordEncoder.encode(request.getNewPassword());
