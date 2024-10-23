@@ -31,10 +31,6 @@ public class AuthController {
 	@PostMapping("/signup")
 	@ResponseStatus(HttpStatus.CREATED) //201
 	public ResponseMember signup(@Valid @RequestBody SignupRequestDto signupRequestDto) {
-		if (!signupRequestDto.getPassword().equals(signupRequestDto.getCheckPassword())) {
-			throw new IllegalArgumentException("비밀번호를 확인하세요");
-		}
-
 		Member member = authService.signup(signupRequestDto);
 		System.out.println("회원가입 성공");
 		return ResponseMember.make(member);
