@@ -1,14 +1,5 @@
 package com.sparta.spartanewsfeed.domain.comment.service;
 
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.server.ResponseStatusException;
-
 import com.sparta.spartanewsfeed.domain.article.entity.Article;
 import com.sparta.spartanewsfeed.domain.article.repository.ArticleRepository;
 import com.sparta.spartanewsfeed.domain.comment.controller.dto.CommentResponseDto;
@@ -18,9 +9,20 @@ import com.sparta.spartanewsfeed.domain.comment.repository.CommentRepository;
 import com.sparta.spartanewsfeed.domain.jwt.jwt.JwtUtil;
 import com.sparta.spartanewsfeed.domain.member.Member;
 import com.sparta.spartanewsfeed.domain.member.repository.MemberRepository;
-
+import com.sparta.spartanewsfeed.exception.customException.HasNotPermissionException;
+import com.sparta.spartanewsfeed.exception.customException.NotFoundEntityException;
 import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
+
+import static com.sparta.spartanewsfeed.exception.enums.ExceptionCode.*;
 
 @Service
 @RequiredArgsConstructor
@@ -35,7 +37,8 @@ public class CommentService {
 	public CommentResponseDto createComment(Long articleId, String body, String authorization) {
 
 		Article article = articleRepository.findById(articleId)
-			.orElseThrow(() -> new IllegalArgumentException("Article id " + articleId + " not found"));
+			.orElseThrow(() -> new NotFoundEntityException(NOT_FOUND_ARTICLE));
+//			.orElseThrow(() -> new IllegalArgumentException("Article id " + articleId + " not found"));
 
 		Member author = findByEmail(authorization);
 
@@ -50,7 +53,8 @@ public class CommentService {
 
 	public Page<CommentResponseDto> getComments(Long articleId, int page, int size, String authorization) {
 		if (!articleRepository.existsById(articleId)) {
-			throw new IllegalArgumentException("Article id " + articleId + " not found");
+			throw new NotFoundEntityException(NOT_FOUND_ARTICLE);
+//			throw new IllegalArgumentException("Article id " + articleId + " not found");
 		}
 
 		Pageable pageable = PageRequest.of(page, size, Sort.by("updatedAt").descending());
@@ -69,12 +73,14 @@ public class CommentService {
 	public CommentResponseDto updateComment(Long commentId, String body, String authorization) {
 
 		Comment comment = commentRepository.findById(commentId)
-			.orElseThrow(() -> new IllegalArgumentException("Comment id " + commentId + " not found"));
+			.orElseThrow(() -> new NotFoundEntityException(NOT_FOUND_COMMENT));
+//			.orElseThrow(() -> new IllegalArgumentException("Comment id " + commentId + " not found"));
 
 		Member author = findByEmail(authorization);
 
 		if (!comment.getAuthor().equals(author)) {
-			throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You are not the author of this comment");
+			throw new HasNotPermissionException(HAS_NOT_PERMISSION);
+//			throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You are not the author of this comment");
 		}
 
 		boolean isLiked = commentLikeRepository.existsByCommentIdAndMemberId(comment.getId(), author.getId());
@@ -86,12 +92,14 @@ public class CommentService {
 	@Transactional
 	public void deleteComment(Long commentId, String authorization) {
 		Comment comment = commentRepository.findById(commentId)
-			.orElseThrow(() -> new IllegalArgumentException("Comment id " + commentId + " not found"));
+			.orElseThrow(() -> new NotFoundEntityException(NOT_FOUND_COMMENT));
+//			.orElseThrow(() -> new IllegalArgumentException("Comment id " + commentId + " not found"));
 
 		Member author = findByEmail(authorization);
 
 		if (!comment.getAuthor().equals(author)) {
-			throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You are not the author of this comment");
+			throw new HasNotPermissionException(HAS_NOT_PERMISSION);
+//			throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You are not the author of this comment");
 		}
 		commentRepository.delete(comment);
 	}
@@ -101,7 +109,8 @@ public class CommentService {
 		Claims claims = jwtUtil.getUserInfoFromToken(authorization);
 
 		return memberRepository.findByEmail(claims.getSubject())
-			.orElseThrow(() -> new IllegalArgumentException("User not found"));
+			.orElseThrow(() -> new NotFoundEntityException(NOT_FOUND_MEMBER));
+//			.orElseThrow(() -> new IllegalArgumentException("User not found"));
 	}
 
 }
