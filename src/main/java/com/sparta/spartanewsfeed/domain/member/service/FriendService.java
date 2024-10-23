@@ -1,13 +1,13 @@
 package com.sparta.spartanewsfeed.domain.member.service;
 
-import com.sparta.spartanewsfeed.domain.member.Friend;
-import com.sparta.spartanewsfeed.domain.member.Member;
-import com.sparta.spartanewsfeed.domain.member.dto.FriendResponseDto;
-import com.sparta.spartanewsfeed.domain.member.repository.FriendRepository;
-import com.sparta.spartanewsfeed.domain.member.repository.MemberRepository;
-import com.sparta.spartanewsfeed.exception.customException.MakeFriendException;
-import com.sparta.spartanewsfeed.exception.customException.NotFoundEntityException;
-import lombok.extern.slf4j.Slf4j;
+import static com.sparta.spartanewsfeed.domain.member.FriendStatus.*;
+import static com.sparta.spartanewsfeed.exception.enums.ExceptionCode.*;
+
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -15,14 +15,15 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import com.sparta.spartanewsfeed.domain.member.Friend;
+import com.sparta.spartanewsfeed.domain.member.Member;
+import com.sparta.spartanewsfeed.domain.member.dto.FriendResponseDto;
+import com.sparta.spartanewsfeed.domain.member.repository.FriendRepository;
+import com.sparta.spartanewsfeed.domain.member.repository.MemberRepository;
+import com.sparta.spartanewsfeed.exception.customException.MakeFriendException;
+import com.sparta.spartanewsfeed.exception.customException.NotFoundEntityException;
 
-import static com.sparta.spartanewsfeed.domain.member.FriendStatus.ACCEPT;
-import static com.sparta.spartanewsfeed.domain.member.FriendStatus.PENDING;
-import static com.sparta.spartanewsfeed.exception.enums.ExceptionCode.*;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
 @Slf4j(topic = "FriendService")
@@ -83,7 +84,7 @@ public class FriendService {
 	private Friend findByRequestMemberAndResponseMember(Member member, Member friend) {
 		Friend friend1 = friendRepository.findByRequestMemberAndResponseMember(member, friend);
 		if (friend1 == null) {
-			friend1 = friendRepository.findByRequestMemberAndResponseMember(member, friend);
+			friend1 = friendRepository.findByRequestMemberAndResponseMember(friend, member);
 		}
 		return friend1;
 	}
