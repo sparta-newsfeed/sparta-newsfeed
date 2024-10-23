@@ -16,13 +16,13 @@ import java.util.List;
 import static com.sparta.spartanewsfeed.exception.dto.NotValidRequestParameter.NotValidParameter;
 import static com.sparta.spartanewsfeed.exception.enums.ExceptionCode.INVALID_REQUEST_PARAMETER;
 
-@Slf4j
+@Slf4j(topic = "ControllerException")
 @RestControllerAdvice
 public class GlobalExceptionHandler {
     @ExceptionHandler(NotValidCookieException.class)
     public ResponseEntity<Object> handleNotValidCookieException(NotValidCookieException e) {
         ExceptionCode exceptionCode = e.getExceptionCode();
-        log.error("{}: {}", exceptionCode, e.getMessage());
+        log.error("{}: {}", exceptionCode, exceptionCode.getMessage());
         return ResponseEntity.status(exceptionCode.getHttpStatus())
                 .body(makeResponseExceptionCode(exceptionCode));
     }
@@ -30,7 +30,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(NotValidTokenException.class)
     public ResponseEntity<Object> handleNotValidTokenException(NotValidTokenException e) {
         ExceptionCode exceptionCode = e.getExceptionCode();
-        log.error("{}: {}", exceptionCode.name(), e.getMessage());
+        log.error("{}: {}", exceptionCode, exceptionCode.getMessage());
         return ResponseEntity.status(exceptionCode.getHttpStatus())
                 .body(makeResponseExceptionCode(exceptionCode));
     }
@@ -38,7 +38,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(NotMatchPasswordException.class)
     public ResponseEntity<Object> handleNotMatchPasswordException(NotMatchPasswordException e) {
         ExceptionCode exceptionCode = e.getExceptionCode();
-        log.error("{}: {}", exceptionCode.name(), e.getMessage());
+        log.error("{}: {}", exceptionCode, exceptionCode.getMessage());
         return ResponseEntity.status(exceptionCode.getHttpStatus())
                 .body(makeResponseExceptionCode(exceptionCode));
     }
@@ -46,7 +46,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(DuplicateEmailException.class)
     public ResponseEntity<Object> handleDuplicateEmailException(DuplicateEmailException e) {
         ExceptionCode exceptionCode = e.getExceptionCode();
-        log.error("{}: {}", exceptionCode.name(), e.getMessage());
+        log.error("{}: {}", exceptionCode, exceptionCode.getMessage());
         return ResponseEntity.status(exceptionCode.getHttpStatus())
                 .body(makeResponseExceptionCode(exceptionCode));
     }
@@ -54,7 +54,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(HasNotPermissionException.class)
     public ResponseEntity<Object> handleHasNotPermissionException(HasNotPermissionException e) {
         ExceptionCode exceptionCode = e.getExceptionCode();
-        log.error("{}: {}", exceptionCode.name(), e.getMessage());
+        log.error("{}: {}", exceptionCode, exceptionCode.getMessage());
         return ResponseEntity.status(exceptionCode.getHttpStatus())
                 .body(makeResponseExceptionCode(exceptionCode));
     }
@@ -62,7 +62,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(NotFoundEntityException.class)
     public ResponseEntity<Object> handleNotFoundEntityException(NotFoundEntityException e) {
         ExceptionCode exceptionCode = e.getExceptionCode();
-        log.error("{}: {}", exceptionCode.name(), e.getMessage());
+        log.error("{}: {}", exceptionCode, exceptionCode.getMessage());
         return ResponseEntity.status(exceptionCode.getHttpStatus())
                 .body(makeResponseExceptionCode(exceptionCode));
     }
@@ -77,7 +77,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Object> handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
         ExceptionCode exceptionCode = INVALID_REQUEST_PARAMETER;
-        log.error("{}: {}", exceptionCode.name(), e.getMessage());
+        log.error("{}: {}", exceptionCode, exceptionCode.getMessage());
         return ResponseEntity.status(exceptionCode.getHttpStatus())
                 .body(makeNotValidRequestParameter(e, exceptionCode));
     }

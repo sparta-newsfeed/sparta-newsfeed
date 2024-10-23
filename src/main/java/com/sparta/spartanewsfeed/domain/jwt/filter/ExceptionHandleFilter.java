@@ -9,12 +9,14 @@ import com.sparta.spartanewsfeed.exception.enums.ExceptionCode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.*;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 
+@Slf4j(topic = "FilterException")
 @Component
 @Order(2)
 public class ExceptionHandleFilter implements Filter {
@@ -48,6 +50,8 @@ public class ExceptionHandleFilter implements Filter {
                 .code(exceptionCode.name())
                 .message(exceptionCode.getMessage())
                 .build();
+
+        log.error("{}: {}", exceptionCode, exceptionCode.getMessage());
 
         httpServletResponse.getWriter().write(objectMapper.writeValueAsString(responseExceptionCode));
     }

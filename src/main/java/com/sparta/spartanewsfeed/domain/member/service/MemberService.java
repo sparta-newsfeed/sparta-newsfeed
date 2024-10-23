@@ -64,6 +64,10 @@ public class MemberService {
             throw new NotMatchPasswordException(NOT_MATCH_CHECK_PASSWORD);
         }
 
+        if (passwordEncoder.matches(request.getNewPassword(), member.getPassword())) {
+            throw new NotMatchPasswordException(CURRENT_PASSWORD_AND_CHANGE_PASSWORD_IS_SAME);
+        }
+
         String encodedPassword = passwordEncoder.encode(request.getNewPassword());
         member.updatePassword(encodedPassword);
         memberRepository.save(member);

@@ -21,6 +21,8 @@ public enum ExceptionCode {
 
     NOT_MATCH_CHECK_PASSWORD(HttpStatus.BAD_REQUEST, "Not match origin password and checking password"),
 
+    CURRENT_PASSWORD_AND_CHANGE_PASSWORD_IS_SAME(HttpStatus.BAD_REQUEST, "Current password and change password is same"),
+
     HAS_NOT_COOKIE(HttpStatus.BAD_REQUEST, "Request has not cookie"),
 
     HAS_NOT_TOKEN(HttpStatus.BAD_REQUEST, "Request has not token"),
