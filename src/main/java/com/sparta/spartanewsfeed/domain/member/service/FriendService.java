@@ -3,6 +3,7 @@ package com.sparta.spartanewsfeed.domain.member.service;
 import static com.sparta.spartanewsfeed.domain.member.FriendStatus.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -47,7 +48,7 @@ public class FriendService {
 			.orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다."));
 
 		Friend friend1 = findByRequestMemberAndResponseMember(member, friend);
-		if (!member.getId().equals(friendId)) {
+		if (member.isUserIdEqual(friendId)) {
 			throw new IllegalArgumentException("본인과 친구가 될 수 없습니다.");
 		}
 		if (friend1 != null) {
@@ -87,10 +88,11 @@ public class FriendService {
 
 	public List<Member> getRelatedFriends(Member requestMember) {
 		List<Friend> friends = friendRepository.findFriendsByMember(requestMember);
-
-		return friends.stream()
+		List<Member> members = new ArrayList<>(friends.stream()
 			.map(friend -> friend.findFriend(requestMember))
 			.flatMap(Optional::stream)
-			.toList();
+			.toList());
+		members.add(requestMember);
+		return members;
 	}
 }
