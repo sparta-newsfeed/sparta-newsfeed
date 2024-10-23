@@ -52,7 +52,7 @@ public class AuthService {
 		}
 
 		if (!signupRequestDto.getPassword().equals(signupRequestDto.getCheckPassword())) {
-			throw new DuplicateEmailException(NOT_MATCH_PASSWORD);
+			throw new DuplicateEmailException(NOT_MATCH_CHECK_PASSWORD);
 		}
 
 		//비밀번호 요구사항 체크는 SignRequestDto에서 설정
