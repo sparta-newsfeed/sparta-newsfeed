@@ -11,7 +11,4 @@ import com.sparta.spartanewsfeed.domain.comment.entity.Comment;
 public interface CommentRepository extends JpaRepository<Comment, Long> {
 	@Query("SELECT c FROM Comment c JOIN FETCH c.author WHERE c.article.id = :articleId")
 	Page<Comment> findAllByArticleId(Pageable pageable, @Param("articleId") Long articleId);
-
-	@Query("SELECT c FROM Comment c LEFT JOIN c.likes l WHERE c.article.id = :articleId GROUP BY c.id ORDER BY COUNT(l) DESC")
-	Page<Comment> findAllByArticleIdOrderByLikesCount(Long articleId, Pageable pageable);
 }

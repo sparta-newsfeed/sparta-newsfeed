@@ -62,7 +62,8 @@ public class CommentService {
 		Page<Comment> comments;
 
 		if ("popular".equals(sortBy)) {
-			comments = commentRepository.findAllByArticleIdOrderByLikesCount(articleId, pageable);  // 인기순 정렬
+			comments = commentLikeRepository.findCommentsByArticleOrderByLikes(articleId, pageable);
+			//comments = commentRepository.findAllByArticleIdOrderByLikesCount(articleId, pageable);  // 인기순 정렬
 		} else {
 			comments = commentRepository.findAllByArticleId(pageable, articleId);  // 기본 최신순 정렬
 		}

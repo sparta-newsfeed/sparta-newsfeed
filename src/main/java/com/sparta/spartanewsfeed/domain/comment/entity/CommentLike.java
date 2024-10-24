@@ -1,5 +1,6 @@
 package com.sparta.spartanewsfeed.domain.comment.entity;
 
+import com.sparta.spartanewsfeed.domain.Timestamp;
 import com.sparta.spartanewsfeed.domain.member.Member;
 
 import jakarta.persistence.Entity;
@@ -21,7 +22,7 @@ import lombok.NoArgsConstructor;
 @Table
 @AllArgsConstructor
 @NoArgsConstructor
-public class CommentLike {
+public class CommentLike extends Timestamp {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
